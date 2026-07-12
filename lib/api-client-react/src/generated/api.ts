@@ -26,12 +26,20 @@ import type {
   CommandInput,
   CommandResult,
   ErrorResponse,
+  FsFile,
+  FsListing,
+  FsWriteInput,
+  FsWriteResult,
   GetAuditLogsParams,
+  GetFsListParams,
+  GetFsReadParams,
   HealthStatus,
   KernelLog,
   LoginInput,
   Module,
   ModuleUpdate,
+  PackageList,
+  ProcessList,
   Realm,
   SystemMetrics
 } from './api.schemas';
@@ -1045,6 +1053,399 @@ export function useGetKernelLog<TData = Awaited<ReturnType<typeof getKernelLog>>
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetKernelLogQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetFsListUrl = (params?: GetFsListParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/fs/list?${stringifiedParams}` : `/api/fs/list`
+}
+
+/**
+ * @summary List a directory on the host filesystem
+ */
+export const getFsList = async (params?: GetFsListParams, options?: RequestInit): Promise<FsListing> => {
+
+  return customFetch<FsListing>(getGetFsListUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetFsListQueryKey = (params?: GetFsListParams,) => {
+    return [
+    `/api/fs/list`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetFsListQueryOptions = <TData = Awaited<ReturnType<typeof getFsList>>, TError = ErrorType<ErrorResponse>>(params?: GetFsListParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFsList>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFsListQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFsList>>> = ({ signal }) => getFsList(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFsList>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetFsListQueryResult = NonNullable<Awaited<ReturnType<typeof getFsList>>>
+export type GetFsListQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary List a directory on the host filesystem
+ */
+
+export function useGetFsList<TData = Awaited<ReturnType<typeof getFsList>>, TError = ErrorType<ErrorResponse>>(
+ params?: GetFsListParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFsList>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetFsListQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetFsReadUrl = (params: GetFsReadParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/fs/read?${stringifiedParams}` : `/api/fs/read`
+}
+
+/**
+ * @summary Read a file from the host filesystem
+ */
+export const getFsRead = async (params: GetFsReadParams, options?: RequestInit): Promise<FsFile> => {
+
+  return customFetch<FsFile>(getGetFsReadUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetFsReadQueryKey = (params?: GetFsReadParams,) => {
+    return [
+    `/api/fs/read`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetFsReadQueryOptions = <TData = Awaited<ReturnType<typeof getFsRead>>, TError = ErrorType<ErrorResponse>>(params: GetFsReadParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFsRead>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFsReadQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFsRead>>> = ({ signal }) => getFsRead(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFsRead>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetFsReadQueryResult = NonNullable<Awaited<ReturnType<typeof getFsRead>>>
+export type GetFsReadQueryError = ErrorType<ErrorResponse>
+
+
+/**
+ * @summary Read a file from the host filesystem
+ */
+
+export function useGetFsRead<TData = Awaited<ReturnType<typeof getFsRead>>, TError = ErrorType<ErrorResponse>>(
+ params: GetFsReadParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFsRead>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetFsReadQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getWriteFsFileUrl = () => {
+
+
+
+
+  return `/api/fs/write`
+}
+
+/**
+ * @summary Write a file to the host filesystem
+ */
+export const writeFsFile = async (fsWriteInput: FsWriteInput, options?: RequestInit): Promise<FsWriteResult> => {
+
+  return customFetch<FsWriteResult>(getWriteFsFileUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(fsWriteInput)
+  }
+);}
+
+
+
+
+
+export const getWriteFsFileMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof writeFsFile>>, TError,{data: BodyType<FsWriteInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof writeFsFile>>, TError,{data: BodyType<FsWriteInput>}, TContext> => {
+
+const mutationKey = ['writeFsFile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof writeFsFile>>, {data: BodyType<FsWriteInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  writeFsFile(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WriteFsFileMutationResult = NonNullable<Awaited<ReturnType<typeof writeFsFile>>>
+    export type WriteFsFileMutationBody = BodyType<FsWriteInput>
+    export type WriteFsFileMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Write a file to the host filesystem
+ */
+export const useWriteFsFile = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof writeFsFile>>, TError,{data: BodyType<FsWriteInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof writeFsFile>>,
+        TError,
+        {data: BodyType<FsWriteInput>},
+        TContext
+      > => {
+      return useMutation(getWriteFsFileMutationOptions(options));
+    }
+
+export const getGetProcessesUrl = () => {
+
+
+
+
+  return `/api/system/processes`
+}
+
+/**
+ * @summary Live process list with CPU and memory usage
+ */
+export const getProcesses = async ( options?: RequestInit): Promise<ProcessList> => {
+
+  return customFetch<ProcessList>(getGetProcessesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetProcessesQueryKey = () => {
+    return [
+    `/api/system/processes`
+    ] as const;
+    }
+
+
+export const getGetProcessesQueryOptions = <TData = Awaited<ReturnType<typeof getProcesses>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProcesses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetProcessesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProcesses>>> = ({ signal }) => getProcesses({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProcesses>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetProcessesQueryResult = NonNullable<Awaited<ReturnType<typeof getProcesses>>>
+export type GetProcessesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Live process list with CPU and memory usage
+ */
+
+export function useGetProcesses<TData = Awaited<ReturnType<typeof getProcesses>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProcesses>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetProcessesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPackagesUrl = () => {
+
+
+
+
+  return `/api/packages`
+}
+
+/**
+ * @summary Software catalog with real install status
+ */
+export const getPackages = async ( options?: RequestInit): Promise<PackageList> => {
+
+  return customFetch<PackageList>(getGetPackagesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPackagesQueryKey = () => {
+    return [
+    `/api/packages`
+    ] as const;
+    }
+
+
+export const getGetPackagesQueryOptions = <TData = Awaited<ReturnType<typeof getPackages>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPackages>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPackagesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPackages>>> = ({ signal }) => getPackages({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPackages>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPackagesQueryResult = NonNullable<Awaited<ReturnType<typeof getPackages>>>
+export type GetPackagesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Software catalog with real install status
+ */
+
+export function useGetPackages<TData = Awaited<ReturnType<typeof getPackages>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPackages>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPackagesQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

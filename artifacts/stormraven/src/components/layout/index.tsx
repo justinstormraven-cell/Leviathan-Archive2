@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Terminal, ShieldAlert, Server, Activity, Lock, Hash, Binary, Hammer, Menu, X } from "lucide-react";
 import { useGetSystemMetrics } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
+import { useInWindow } from "@/desktop/chrome-context";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -60,9 +61,20 @@ function SidebarFooter() {
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [navOpen, setNavOpen] = useState(false);
+  const inWindow = useInWindow();
   const { data: metrics } = useGetSystemMetrics({
     query: { refetchInterval: 5000, queryKey: ["/api/system/metrics"] }
   });
+
+  // When rendered inside a desktop window, drop the full-screen chrome
+  // (header + sidebar) and behave as a plain scrolling content pane.
+  if (inWindow) {
+    return (
+      <div className="h-full overflow-y-auto bg-transparent p-4 sm:p-6">
+        {children}
+      </div>
+    );
+  }
 
   // Close the mobile drawer whenever the route changes.
   useEffect(() => {

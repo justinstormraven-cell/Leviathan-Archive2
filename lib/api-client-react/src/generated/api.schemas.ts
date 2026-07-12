@@ -111,8 +111,84 @@ export interface ErrorResponse {
   error: string;
 }
 
+export interface FsEntry {
+  name: string;
+  path: string;
+  type: string;
+  /** @nullable */
+  size: number | null;
+  /** @nullable */
+  modified: string | null;
+}
+
+export interface FsListing {
+  path: string;
+  /** @nullable */
+  parent: string | null;
+  entries: FsEntry[];
+}
+
+export interface FsFile {
+  path: string;
+  content: string;
+  size: number;
+  truncated: boolean;
+}
+
+export interface FsWriteInput {
+  path: string;
+  content: string;
+}
+
+export interface FsWriteResult {
+  ok: boolean;
+  path: string;
+  bytes: number;
+}
+
+export interface ProcessInfo {
+  pid: number;
+  user: string;
+  cpu: number;
+  mem: number;
+  command: string;
+}
+
+export interface ProcessList {
+  capturedAt: string;
+  count: number;
+  loadAvg1: number;
+  loadAvg5: number;
+  loadAvg15: number;
+  processes: ProcessInfo[];
+}
+
+export interface PackageInfo {
+  id: string;
+  name: string;
+  summary: string;
+  category: string;
+  bin: string;
+  icon: string;
+  installed: boolean;
+}
+
+export interface PackageList {
+  capturedAt: string;
+  categories: string[];
+  packages: PackageInfo[];
+}
+
 export type GetAuditLogsParams = {
 limit?: number;
 severity?: string;
+};
+
+export type GetFsListParams = {
+path?: string;
+};
+
+export type GetFsReadParams = {
+path: string;
 };
 

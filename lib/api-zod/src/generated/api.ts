@@ -224,3 +224,90 @@ export const GetKernelLogResponse = zod.object({
 })
 
 
+/**
+ * @summary List a directory on the host filesystem
+ */
+export const GetFsListQueryParams = zod.object({
+  "path": zod.coerce.string().optional()
+})
+
+export const GetFsListResponse = zod.object({
+  "path": zod.string(),
+  "parent": zod.string().nullable(),
+  "entries": zod.array(zod.object({
+  "name": zod.string(),
+  "path": zod.string(),
+  "type": zod.string(),
+  "size": zod.number().nullable(),
+  "modified": zod.string().nullable()
+}))
+})
+
+
+/**
+ * @summary Read a file from the host filesystem
+ */
+export const GetFsReadQueryParams = zod.object({
+  "path": zod.coerce.string()
+})
+
+export const GetFsReadResponse = zod.object({
+  "path": zod.string(),
+  "content": zod.string(),
+  "size": zod.number(),
+  "truncated": zod.boolean()
+})
+
+
+/**
+ * @summary Write a file to the host filesystem
+ */
+export const WriteFsFileBody = zod.object({
+  "path": zod.string(),
+  "content": zod.string()
+})
+
+export const WriteFsFileResponse = zod.object({
+  "ok": zod.boolean(),
+  "path": zod.string(),
+  "bytes": zod.number()
+})
+
+
+/**
+ * @summary Live process list with CPU and memory usage
+ */
+export const GetProcessesResponse = zod.object({
+  "capturedAt": zod.string(),
+  "count": zod.number(),
+  "loadAvg1": zod.number(),
+  "loadAvg5": zod.number(),
+  "loadAvg15": zod.number(),
+  "processes": zod.array(zod.object({
+  "pid": zod.number(),
+  "user": zod.string(),
+  "cpu": zod.number(),
+  "mem": zod.number(),
+  "command": zod.string()
+}))
+})
+
+
+/**
+ * @summary Software catalog with real install status
+ */
+export const GetPackagesResponse = zod.object({
+  "capturedAt": zod.string(),
+  "categories": zod.array(zod.string()),
+  "packages": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "summary": zod.string(),
+  "category": zod.string(),
+  "bin": zod.string(),
+  "icon": zod.string(),
+  "installed": zod.boolean()
+}))
+})
+
+

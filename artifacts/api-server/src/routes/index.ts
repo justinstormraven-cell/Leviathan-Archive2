@@ -7,6 +7,9 @@ import modulesRouter from "./modules";
 import auditRouter from "./audit";
 import terminalRouter from "./terminal";
 import kernelRouter from "./kernel";
+import fsRouter from "./fs";
+import monitorRouter from "./monitor";
+import packagesRouter from "./packages";
 
 const router: IRouter = Router();
 
@@ -18,5 +21,8 @@ router.use(modulesRouter);
 router.use(auditRouter);
 router.use(kernelRouter);
 router.use(terminalRouter);
+router.use(fsRouter);
+router.use(monitorRouter);
+router.use(packagesRouter);
 
 export default router;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Cinzel:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=JetBrains+Mono:wght@100..800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -37,7 +37,7 @@
 
   --color-warning: hsl(var(--warning));
   --color-warning-foreground: hsl(var(--warning-foreground));
-  
+
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
 
@@ -50,10 +50,10 @@
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --font-sans: var(--app-font-mono);
-  --font-serif: var(--app-font-display);
+  --font-sans: var(--app-font-ui);
+  --font-serif: var(--app-font-ui);
   --font-mono: var(--app-font-mono);
-  --font-display: var(--app-font-display);
+  --font-display: var(--app-font-ui);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -62,63 +62,63 @@
 }
 
 /* ==========================================================================
-   NIDELVIR — THE DYING STAR FORGE
-   Copper & bronze forged metal on cooled black slate.
+   STORMRAVEN OS — GLACIER
+   Ice-blue crystalline light on a deep black substrate.
    ========================================================================== */
 :root {
-  --background: 24 16% 5%;      /* cooled black slate */
-  --foreground: 32 32% 82%;     /* warm parchment / light bronze */
+  --background: 213 40% 4%;       /* black with a cold blue undertone */
+  --foreground: 205 25% 92%;      /* icy white */
 
-  --border: 26 30% 15%;         /* oxidised bronze edge */
+  --border: 205 40% 18%;          /* frosted glass edge */
 
-  --card: 24 18% 7%;
-  --card-foreground: 32 32% 82%;
-  --card-border: 26 30% 17%;
+  --card: 210 38% 7%;
+  --card-foreground: 205 25% 92%;
+  --card-border: 205 45% 20%;
 
-  --popover: 24 18% 7%;
-  --popover-foreground: 32 32% 82%;
-  --popover-border: 26 30% 17%;
+  --popover: 210 40% 6%;
+  --popover-foreground: 205 25% 92%;
+  --popover-border: 205 45% 20%;
 
-  --primary: 28 62% 52%;        /* struck copper */
-  --primary-foreground: 24 30% 6%;
+  --primary: 196 94% 56%;         /* glacier ice blue */
+  --primary-foreground: 213 60% 5%;
 
-  --secondary: 26 22% 13%;
-  --secondary-foreground: 32 32% 82%;
+  --secondary: 208 32% 13%;
+  --secondary-foreground: 205 25% 92%;
 
-  --muted: 26 16% 11%;
-  --muted-foreground: 32 22% 60%;
+  --muted: 208 26% 12%;
+  --muted-foreground: 205 18% 60%;
 
-  --accent: 30 55% 30%;         /* deep forged copper */
-  --accent-foreground: 34 60% 88%;
+  --accent: 190 80% 45%;          /* deeper cyan ice */
+  --accent-foreground: 205 40% 96%;
 
-  --destructive: 8 78% 52%;     /* forge ember */
-  --destructive-foreground: 24 30% 6%;
+  --destructive: 353 80% 58%;     /* warning crimson */
+  --destructive-foreground: 210 40% 96%;
 
-  --warning: 38 92% 55%;        /* molten gold */
-  --warning-foreground: 24 30% 6%;
+  --warning: 42 96% 58%;          /* amber */
+  --warning-foreground: 213 60% 5%;
 
-  --success: 150 40% 42%;       /* verdigris patina */
-  --success-foreground: 24 30% 6%;
+  --success: 158 66% 45%;         /* frost mint */
+  --success-foreground: 213 60% 5%;
 
-  --input: 26 26% 16%;
-  --ring: 30 70% 55%;
+  --input: 208 34% 16%;
+  --ring: 196 94% 60%;
 
-  --sidebar: 24 20% 6%;
-  --sidebar-foreground: 32 28% 72%;
-  --sidebar-border: 26 30% 14%;
-  --sidebar-primary: 28 62% 52%;
-  --sidebar-primary-foreground: 24 30% 6%;
-  --sidebar-accent: 26 18% 11%;
-  --sidebar-accent-foreground: 34 60% 88%;
-  --sidebar-ring: 30 70% 55%;
+  --sidebar: 212 40% 5%;
+  --sidebar-foreground: 205 22% 80%;
+  --sidebar-border: 205 40% 16%;
+  --sidebar-primary: 196 94% 56%;
+  --sidebar-primary-foreground: 213 60% 5%;
+  --sidebar-accent: 208 28% 12%;
+  --sidebar-accent-foreground: 205 40% 96%;
+  --sidebar-ring: 196 94% 60%;
 
+  --app-font-ui: 'Ubuntu', system-ui, sans-serif;
   --app-font-mono: 'JetBrains Mono', monospace;
-  --app-font-display: 'Cinzel', 'JetBrains Mono', serif;
-  --radius: 0.25rem;
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Same as root because we only want dark mode */
+  /* Same as root — this OS is dark-only */
 }
 
 @layer base {
@@ -127,61 +127,75 @@
   }
 
   body {
-    @apply font-mono antialiased bg-background text-foreground;
-    /* Dying-star forge glow rising from below */
-    background-image: radial-gradient(
-      ellipse 80% 55% at 50% 118%,
-      hsla(28, 85%, 32%, 0.20),
-      transparent 62%
-    );
-    background-attachment: fixed;
+    @apply font-sans antialiased bg-background text-foreground;
+    overflow: hidden;
   }
 }
 
-/* Display / wordmark font — engraved forge lettering */
 .font-display {
-  font-family: var(--app-font-display);
-  letter-spacing: 0.08em;
+  font-family: var(--app-font-ui);
+  letter-spacing: 0.01em;
 }
 
-/* Scanline overlay */
-body::before {
-  content: " ";
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(18, 16, 16, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%
-  );
-  background-size: 100% 4px;
-  z-index: 9999;
-  pointer-events: none;
+/* Frosted-glass surface used across the desktop shell */
+@layer utilities {
+  .glass {
+    background: hsla(210, 42%, 8%, 0.72);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+  .glass-strong {
+    background: hsla(212, 44%, 6%, 0.9);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+  .ice-glow {
+    box-shadow: 0 0 24px hsla(196, 94%, 56%, 0.28);
+  }
+  .ice-text-glow {
+    text-shadow: 0 0 18px hsla(196, 94%, 56%, 0.55);
+  }
+  .pulse-border {
+    box-shadow: 0 0 10px var(--color-primary), inset 0 0 10px hsla(196, 94%, 56%, 0.25);
+  }
+  .pulse-border-warning {
+    box-shadow: 0 0 10px var(--color-warning), inset 0 0 8px hsla(42, 96%, 58%, 0.25);
+  }
+  .pulse-border-destructive {
+    box-shadow: 0 0 10px var(--color-destructive), inset 0 0 8px hsla(353, 80%, 58%, 0.25);
+  }
+  .forge-glow {
+    filter: drop-shadow(0 0 18px hsla(196, 90%, 55%, 0.4));
+  }
 }
 
-/* Screen flicker animation — like an unstable forge flame */
-@keyframes flicker {
-  0% { opacity: 0.95; }
-  5% { opacity: 0.85; }
-  10% { opacity: 0.95; }
-  15% { opacity: 1; }
-  50% { opacity: 0.98; }
-  100% { opacity: 1; }
+/* Thin frosted scrollbars everywhere inside the OS */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(205 40% 26%) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: hsla(205, 40%, 30%, 0.7);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: hsla(196, 80%, 45%, 0.8);
+  background-clip: content-box;
 }
 
-body {
-  animation: flicker 10s infinite;
-}
-
-/* Glitch effect utility — warm ember / gold split (dying star instability) */
+/* Glitch effect utility — ice/cyan split */
 .glitch-text {
   position: relative;
 }
-
 .glitch-text::before,
 .glitch-text::after {
   content: attr(data-text);
@@ -192,57 +206,29 @@ body {
   height: 100%;
   opacity: 0.75;
 }
-
 .glitch-text::before {
   left: 2px;
-  text-shadow: -2px 0 hsl(8 85% 55%);
+  text-shadow: -2px 0 hsl(196 94% 56%);
   clip: rect(24px, 550px, 90px, 0);
   animation: glitch-anim 3s infinite linear alternate-reverse;
 }
-
 .glitch-text::after {
   left: -2px;
-  text-shadow: 2px 0 hsl(38 92% 58%);
+  text-shadow: 2px 0 hsl(190 80% 50%);
   clip: rect(85px, 550px, 140px, 0);
   animation: glitch-anim 2.5s infinite linear alternate-reverse;
 }
 
 @keyframes glitch-anim {
   0% { clip: rect(10px, 9999px, 31px, 0); }
-  5% { clip: rect(70px, 9999px, 96px, 0); }
-  10% { clip: rect(40px, 9999px, 58px, 0); }
-  15% { clip: rect(89px, 9999px, 10px, 0); }
   20% { clip: rect(54px, 9999px, 75px, 0); }
-  25% { clip: rect(11px, 9999px, 20px, 0); }
-  30% { clip: rect(32px, 9999px, 45px, 0); }
-  35% { clip: rect(81px, 9999px, 90px, 0); }
   40% { clip: rect(25px, 9999px, 66px, 0); }
-  45% { clip: rect(69px, 9999px, 10px, 0); }
-  50% { clip: rect(98px, 9999px, 83px, 0); }
-  55% { clip: rect(21px, 9999px, 34px, 0); }
   60% { clip: rect(56px, 9999px, 47px, 0); }
-  65% { clip: rect(78px, 9999px, 29px, 0); }
-  70% { clip: rect(12px, 9999px, 74px, 0); }
-  75% { clip: rect(44px, 9999px, 15px, 0); }
   80% { clip: rect(92px, 9999px, 59px, 0); }
-  85% { clip: rect(35px, 9999px, 88px, 0); }
-  90% { clip: rect(67px, 9999px, 22px, 0); }
-  95% { clip: rect(19px, 9999px, 50px, 0); }
   100% { clip: rect(84px, 9999px, 93px, 0); }
 }
 
-@layer utilities {
-  .pulse-border {
-    box-shadow: 0 0 10px var(--color-primary), inset 0 0 10px var(--color-primary);
-  }
-  .pulse-border-warning {
-    box-shadow: 0 0 10px var(--color-warning), inset 0 0 10px var(--color-warning);
-  }
-  .pulse-border-destructive {
-    box-shadow: 0 0 10px var(--color-destructive), inset 0 0 10px var(--color-destructive);
-  }
-  /* Faint emeber glow for the emblem */
-  .forge-glow {
-    filter: drop-shadow(0 0 18px hsla(28, 80%, 45%, 0.35));
-  }
+/* react-rnd: keep resize handles above window content */
+.react-draggable-transparent-selection {
+  user-select: none;
 }

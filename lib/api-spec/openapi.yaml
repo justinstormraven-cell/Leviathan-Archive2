@@ -24,6 +24,12 @@ tags:
     description: Terminal command execution
   - name: kernel
     description: Live kernel core telemetry
+  - name: fs
+    description: Filesystem browsing and editing
+  - name: monitor
+    description: Live process monitoring
+  - name: packages
+    description: Software package catalog
 paths:
   /healthz:
     get:
@@ -281,6 +287,107 @@ paths:
               schema:
                 $ref: "#/components/schemas/KernelLog"
 
+  /fs/list:
+    get:
+      operationId: getFsList
+      tags: [fs]
+      summary: List a directory on the host filesystem
+      parameters:
+        - name: path
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Directory listing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsListing"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /fs/read:
+    get:
+      operationId: getFsRead
+      tags: [fs]
+      summary: Read a file from the host filesystem
+      parameters:
+        - name: path
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: File contents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsFile"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /fs/write:
+    post:
+      operationId: writeFsFile
+      tags: [fs]
+      summary: Write a file to the host filesystem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FsWriteInput"
+      responses:
+        "200":
+          description: Write result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsWriteResult"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /system/processes:
+    get:
+      operationId: getProcesses
+      tags: [monitor]
+      summary: Live process list with CPU and memory usage
+      responses:
+        "200":
+          description: Process snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessList"
+
+  /packages:
+    get:
+      operationId: getPackages
+      tags: [packages]
+      summary: Software catalog with real install status
+      responses:
+        "200":
+          description: Package catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackageList"
+
 components:
   schemas:
     HealthStatus:
@@ -516,3 +623,170 @@ components:
       properties:
         error:
           type: string
+
+    FsEntry:
+      type: object
+      required:
+        - name
+        - path
+        - type
+        - size
+        - modified
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        type:
+          type: string
+        size:
+          type: ["number", "null"]
+        modified:
+          type: ["string", "null"]
+
+    FsListing:
+      type: object
+      required:
+        - path
+        - parent
+        - entries
+      properties:
+        path:
+          type: string
+        parent:
+          type: ["string", "null"]
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/FsEntry"
+
+    FsFile:
+      type: object
+      required:
+        - path
+        - content
+        - size
+        - truncated
+      properties:
+        path:
+          type: string
+        content:
+          type: string
+        size:
+          type: integer
+        truncated:
+          type: boolean
+
+    FsWriteInput:
+      type: object
+      required:
+        - path
+        - content
+      properties:
+        path:
+          type: string
+        content:
+          type: string
+
+    FsWriteResult:
+      type: object
+      required:
+        - ok
+        - path
+        - bytes
+      properties:
+        ok:
+          type: boolean
+        path:
+          type: string
+        bytes:
+          type: integer
+
+    ProcessInfo:
+      type: object
+      required:
+        - pid
+        - user
+        - cpu
+        - mem
+        - command
+      properties:
+        pid:
+          type: integer
+        user:
+          type: string
+        cpu:
+          type: number
+        mem:
+          type: number
+        command:
+          type: string
+
+    ProcessList:
+      type: object
+      required:
+        - capturedAt
+        - count
+        - loadAvg1
+        - loadAvg5
+        - loadAvg15
+        - processes
+      properties:
+        capturedAt:
+          type: string
+        count:
+          type: integer
+        loadAvg1:
+          type: number
+        loadAvg5:
+          type: number
+        loadAvg15:
+          type: number
+        processes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessInfo"
+
+    PackageInfo:
+      type: object
+      required:
+        - id
+        - name
+        - summary
+        - category
+        - bin
+        - icon
+        - installed
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        category:
+          type: string
+        bin:
+          type: string
+        icon:
+          type: string
+        installed:
+          type: boolean
+
+    PackageList:
+      type: object
+      required:
+        - capturedAt
+        - categories
+        - packages
+      properties:
+        capturedAt:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        packages:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackageInfo"
