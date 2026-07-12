@@ -26,11 +26,11 @@ export default function AuditLog() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-4 bg-secondary p-3 border border-border shrink-0">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 bg-secondary p-3 border border-border shrink-0">
           <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase font-bold tracking-wider">
             <Filter size={16} /> Filters:
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {['', 'INFO', 'WARN', 'CRITICAL', 'SUCCESS'].map((sev) => (
               <button
                 key={sev || 'ALL'}
@@ -54,7 +54,7 @@ export default function AuditLog() {
             </div>
           ) : (
             <div className="overflow-auto flex-1 custom-scrollbar">
-              <table className="w-full text-sm text-left">
+              <table className="w-full min-w-[760px] text-sm text-left">
                 <thead className="text-xs uppercase bg-secondary/80 text-muted-foreground sticky top-0 z-10">
                   <tr>
                     <th className="px-4 py-3 border-b border-border">TIMESTAMP</th>

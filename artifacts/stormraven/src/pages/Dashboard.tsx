@@ -42,7 +42,7 @@ export default function Dashboard() {
         </div>
 
         {/* Top metrics grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <TerminalCard variant={metrics?.threatLevel === 'CRITICAL' ? 'destructive' : 'default'} className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-xs font-bold tracking-widest">THREAT LEVEL</span>

@@ -14,7 +14,7 @@ export default function Realms() {
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif" data-text="YGGDRASIL TOPOLOGY">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif" data-text="YGGDRASIL TOPOLOGY">
               YGGDRASIL TOPOLOGY
             </h1>
             <p className="text-sm text-muted-foreground mt-2 uppercase tracking-wider">System Realms Overview & Monitoring</p>
