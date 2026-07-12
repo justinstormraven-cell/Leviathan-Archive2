@@ -32,8 +32,8 @@ export default function Dashboard() {
     <Layout>
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text" data-text="NEXUS COMMAND">
-            NEXUS COMMAND
+          <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif" data-text="BIFROST">
+            BIFROST
           </h1>
           <span className="text-xs text-muted-foreground animate-pulse flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary"></div>
@@ -123,7 +123,7 @@ export default function Dashboard() {
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-2">
-                <h2 className="text-sm font-bold tracking-widest text-primary">CORE MODULES</h2>
+                <h2 className="text-sm font-bold tracking-widest text-primary">THE FORGE</h2>
                 <Link href="/modules" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Manage</Link>
               </div>
               <div className="flex flex-col gap-2">
@@ -143,7 +143,7 @@ export default function Dashboard() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-2">
-                <h2 className="text-sm font-bold tracking-widest text-primary">RECENT AUDIT</h2>
+                <h2 className="text-sm font-bold tracking-widest text-primary">MIMIR // LEDGER</h2>
                 <Link href="/audit" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Logs</Link>
               </div>
               <div className="flex flex-col gap-2 font-mono text-xs">

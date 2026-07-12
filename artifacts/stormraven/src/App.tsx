@@ -9,6 +9,7 @@ import Realms from '@/pages/Realms';
 import Modules from '@/pages/Modules';
 import AuditLog from '@/pages/AuditLog';
 import Terminal from '@/pages/Terminal';
+import Kernel from '@/pages/Kernel';
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/modules" component={Modules} />
       <Route path="/audit" component={AuditLog} />
       <Route path="/terminal" component={Terminal} />
+      <Route path="/kernel" component={Kernel} />
       <Route component={NotFound} />
     </Switch>
   );

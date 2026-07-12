@@ -17,8 +17,8 @@ export default function AuditLog() {
       <div className="max-w-6xl mx-auto space-y-6 h-full flex flex-col">
         <div className="flex items-center justify-between shrink-0">
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text" data-text="SECURITY AUDIT LOG">
-              SECURITY AUDIT LOG
+            <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif" data-text="MIMIR'S LEDGER">
+              MIMIR'S LEDGER
             </h1>
             <p className="text-sm text-muted-foreground mt-2 uppercase tracking-wider">System Event Chronicle & Forensic Trail</p>
           </div>

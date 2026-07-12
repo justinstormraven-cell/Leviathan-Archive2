@@ -206,3 +206,21 @@ export const GetTerminalHistoryResponseItem = zod.object({
 export const GetTerminalHistoryResponse = zod.array(GetTerminalHistoryResponseItem)
 
 
+/**
+ * Real kernel/system facts gathered live from the host (uname, /proc, mounts, crypto flags).
+ * @summary Live kernel and hardened-core boot log
+ */
+export const GetKernelLogResponse = zod.object({
+  "kernelVersion": zod.string(),
+  "hostname": zod.string(),
+  "capturedAt": zod.string(),
+  "lines": zod.array(zod.object({
+  "seq": zod.number(),
+  "timestamp": zod.number(),
+  "level": zod.string(),
+  "subsystem": zod.string(),
+  "message": zod.string()
+}))
+})
+
+

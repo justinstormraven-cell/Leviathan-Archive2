@@ -14,6 +14,8 @@ export * from './commandResult';
 export * from './errorResponse';
 export * from './getAuditLogsParams';
 export * from './healthStatus';
+export * from './kernelLog';
+export * from './kernelLogLine';
 export * from './loginInput';
 export * from './module';
 export * from './moduleUpdate';

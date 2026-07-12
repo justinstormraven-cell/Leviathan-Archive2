@@ -6,6 +6,7 @@ import realmsRouter from "./realms";
 import modulesRouter from "./modules";
 import auditRouter from "./audit";
 import terminalRouter from "./terminal";
+import kernelRouter from "./kernel";
 
 const router: IRouter = Router();
 
@@ -15,6 +16,7 @@ router.use(systemRouter);
 router.use(realmsRouter);
 router.use(modulesRouter);
 router.use(auditRouter);
+router.use(kernelRouter);
 router.use(terminalRouter);
 
 export default router;

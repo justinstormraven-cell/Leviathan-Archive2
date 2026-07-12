@@ -9,6 +9,21 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface KernelLogLine {
+  seq: number;
+  timestamp: number;
+  level: string;
+  subsystem: string;
+  message: string;
+}
+
+export interface KernelLog {
+  kernelVersion: string;
+  hostname: string;
+  capturedAt: string;
+  lines: KernelLogLine[];
+}
+
 export interface SystemMetrics {
   memoryPercent: number;
   cpuPercent: number;

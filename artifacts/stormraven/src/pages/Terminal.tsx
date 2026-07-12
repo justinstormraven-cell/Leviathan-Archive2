@@ -11,15 +11,8 @@ import { Terminal as TerminalIcon, Lock, LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const TOKEN_KEY = "stormraven_token";
-
-const BANNER = `
-   _____ _                     _____                       
-  / ____| |                   |  __ \\                      
- | (___ | |_ ___  _ __ _ __   | |__) |__ ___   _____ _ __  
-  \\___ \\| __/ _ \\| '__| '_ \\  |  _  // _ \` \\ \\ / / _ \\ '_ \\ 
-  ____) | || (_) | |  | | | | | | \\ \\ (_| |\\ V /  __/ | | |
- |_____/ \\__\\___/|_|  |_| |_| |_|  \\_\\__,_| \\_/ \\___|_| |_|
-`;
+const EMBLEM = `${import.meta.env.BASE_URL}nidelvir-emblem.png`;
+const PROMPT = "luci@nidelvir:~#";
 
 function getErrStatus(err: unknown): number | undefined {
   return (err as { status?: number } | null)?.status;
@@ -39,12 +32,17 @@ export default function Terminal() {
     <Layout>
       <div className="h-full flex flex-col max-w-6xl mx-auto space-y-4">
         <div className="flex items-center justify-between shrink-0">
-          <h1
-            className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text"
-            data-text="TERMINAL INTERFACE"
-          >
-            TERMINAL INTERFACE
-          </h1>
+          <div>
+            <h1
+              className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif"
+              data-text="GALDR"
+            >
+              GALDR
+            </h1>
+            <p className="text-sm text-muted-foreground mt-2 uppercase tracking-wider">
+              Spoken Runes — Live Root Shell
+            </p>
+          </div>
           <div className="flex items-center gap-3">
             {token && (
               <button
@@ -52,7 +50,7 @@ export default function Terminal() {
                 className="flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground hover:text-destructive transition-colors"
                 data-testid="button-logout"
               >
-                <LogOut size={14} /> Lock
+                <LogOut size={14} /> Seal
               </button>
             )}
             <TerminalIcon size={32} className="text-primary opacity-50" />
@@ -97,10 +95,10 @@ function LoginScreen({
         const status = getErrStatus(err);
         setError(
           status === 401
-            ? "ACCESS DENIED — invalid operator credentials"
+            ? "THE FORGE REJECTS YOU — invalid smith credentials"
             : status === 503
-              ? "No operator password is configured on the server"
-              : "Authentication failed — connection error",
+              ? "No smith seal is configured on the forge"
+              : "Binding failed — connection to the core lost",
         );
       },
     },
@@ -114,24 +112,27 @@ function LoginScreen({
   return (
     <TerminalCard className="flex-1 flex items-center justify-center font-mono bg-black/90 border-primary/30">
       <div className="w-full max-w-md p-8 space-y-6">
-        <pre className="text-primary/70 text-[10px] leading-tight whitespace-pre overflow-hidden">
-          {BANNER}
-        </pre>
+        <img
+          src={EMBLEM}
+          alt="Nidelvir — The Dying Star Forge"
+          className="w-full max-w-xs mx-auto forge-glow select-none pointer-events-none"
+          draggable={false}
+        />
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-2 text-primary">
             <Lock size={16} />
-            <span className="uppercase tracking-widest text-sm font-bold">
-              Secure Shell — Authentication Required
+            <span className="uppercase tracking-widest text-sm font-bold font-serif">
+              Sealed Forge — Smith Rites Required
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            This is a live root shell. Operator credentials required.
+            This is a live root shell into the Nidelvir core. Only the smith may strike.
           </p>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center gap-2 border border-primary/30 bg-background/50 px-3 py-2">
-            <span className="text-primary font-bold text-sm">passwd:</span>
+            <span className="text-primary font-bold text-sm">seal:</span>
             <input
               ref={inputRef}
               type="password"
@@ -156,10 +157,10 @@ function LoginScreen({
           <button
             onClick={submit}
             disabled={login.isPending || !password.trim()}
-            className="w-full border border-primary bg-primary/10 hover:bg-primary/20 disabled:opacity-40 text-primary uppercase tracking-widest text-sm py-2 transition-colors"
+            className="w-full border border-primary bg-primary/10 hover:bg-primary/20 disabled:opacity-40 text-primary uppercase tracking-widest text-sm py-2 transition-colors font-serif"
             data-testid="button-login"
           >
-            {login.isPending ? "Authenticating…" : "Authenticate"}
+            {login.isPending ? "Binding…" : "Strike The Forge"}
           </button>
         </div>
       </div>
@@ -253,8 +254,6 @@ function Shell({ onUnauthorized }: { onUnauthorized: () => void }) {
     }
   };
 
-  const PROMPT = "Leviathan@Lilith:~#";
-
   return (
     <TerminalCard
       className="flex-1 flex flex-col font-mono text-sm bg-black/90 p-0 border-primary/30"
@@ -264,21 +263,20 @@ function Shell({ onUnauthorized }: { onUnauthorized: () => void }) {
         <div className="w-3 h-3 rounded-full bg-destructive"></div>
         <div className="w-3 h-3 rounded-full bg-warning"></div>
         <div className="w-3 h-3 rounded-full bg-success"></div>
-        <span className="ml-2">bash — Leviathan@Lilith (live)</span>
+        <span className="ml-2">galdr — luci@nidelvir (live)</span>
       </div>
 
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar text-foreground"
       >
-        <div className="text-primary/70 mb-2 whitespace-pre">{BANNER}</div>
         <div className="text-muted-foreground mb-4 text-xs">
-          {"> LIVE ROOT SHELL — commands execute on the StormRaven host"}
+          {"> NIDELVIR LIVE ROOT SHELL — runes strike directly on the forge host"}
           <br />
-          {"> Type any real command (ls, pwd, cat, ps, df, uname -a). 'clear' wipes the screen."}
+          {"> Speak any real command (ls, pwd, cat, ps, df, uname -a). 'clear' cools the screen."}
         </div>
 
-        {isLoading && <div className="animate-pulse">Loading session…</div>}
+        {isLoading && <div className="animate-pulse">Kindling session…</div>}
 
         {visible.map((h) => (
           <div key={h.id} className="space-y-1">

@@ -51,8 +51,8 @@ export default function Modules() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text" data-text="MODULE MANAGEMENT">
-              MODULE MANAGEMENT
+            <h1 className="text-2xl font-bold tracking-widest text-foreground uppercase border-b-2 border-primary pb-2 inline-block glitch-text font-serif" data-text="THE FORGE">
+              THE FORGE
             </h1>
             <p className="text-sm text-muted-foreground mt-2 uppercase tracking-wider">Subsystem Control & Allocation</p>
           </div>

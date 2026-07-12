@@ -1,12 +1,14 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { Terminal, ShieldAlert, Cpu, Server, Activity, Lock, Hash } from "lucide-react";
+import { Terminal, ShieldAlert, Server, Activity, Lock, Hash, Binary, Hammer } from "lucide-react";
 import { useGetSystemMetrics } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
+
+const EMBLEM = `${import.meta.env.BASE_URL}nidelvir-mark.png`;
 
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
@@ -15,11 +17,12 @@ export default function Layout({ children }: LayoutProps) {
   });
 
   const navItems = [
-    { href: "/", label: "NEXUS", icon: Activity },
+    { href: "/", label: "BIFROST", icon: Activity },
     { href: "/realms", label: "YGGDRASIL", icon: Server },
-    { href: "/modules", label: "MODULES", icon: Cpu },
-    { href: "/audit", label: "AUDIT LOG", icon: ShieldAlert },
-    { href: "/terminal", label: "TERMINAL", icon: Terminal },
+    { href: "/modules", label: "THE FORGE", icon: Hammer },
+    { href: "/audit", label: "MIMIR", icon: ShieldAlert },
+    { href: "/terminal", label: "GALDR", icon: Terminal },
+    { href: "/kernel", label: "YMIR CORE", icon: Binary },
   ];
 
   return (
@@ -27,16 +30,31 @@ export default function Layout({ children }: LayoutProps) {
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm z-40 flex items-center justify-between px-4 py-2 shrink-0">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-primary">
-            <Terminal size={24} className="animate-pulse" />
-            <span className="font-bold tracking-widest text-lg glitch-text" data-text="STORMRaven OS">
-              STORMRAVEN OS
-            </span>
+          <div className="flex items-center gap-3">
+            <img
+              src={EMBLEM}
+              alt="Nidelvir emblem"
+              className="w-10 h-10 rounded-full object-cover border border-primary/40 forge-glow shrink-0"
+            />
+            <div className="flex flex-col leading-none gap-0.5">
+              <span className="text-[10px] tracking-[0.35em] text-primary/70 font-display font-bold">
+                NIDELVIR
+              </span>
+              <span
+                className="font-bold tracking-widest text-lg glitch-text font-display text-primary"
+                data-text="STORMRAVEN OS"
+              >
+                STORMRAVEN OS
+              </span>
+              <span className="text-[9px] tracking-[0.28em] text-muted-foreground uppercase">
+                The Dying Star Forge
+              </span>
+            </div>
           </div>
-          <div className="h-6 w-px bg-border mx-2" />
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="uppercase">Identity:</span>
-            <span className="text-primary font-bold tracking-wider">THE CREATOR</span>
+          <div className="h-8 w-px bg-border mx-2 hidden lg:block" />
+          <div className="hidden lg:flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="uppercase">Smith:</span>
+            <span className="text-primary font-bold tracking-wider">LUCI STORMRAVEN</span>
           </div>
         </div>
 
@@ -54,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground uppercase">Auth:</span>
+                <span className="text-muted-foreground uppercase">Rune:</span>
                 <span className="text-warning flex items-center gap-1">
                   <Lock size={12} />
                   {metrics.authLevel}
@@ -104,9 +122,9 @@ export default function Layout({ children }: LayoutProps) {
 
           <div className="p-4 border-t border-border mt-auto">
             <div className="text-xs text-muted-foreground flex flex-col gap-1">
-              <span className="uppercase text-[10px] tracking-widest text-primary/70">SYS.INFO</span>
+              <span className="uppercase text-[10px] tracking-widest text-primary/70">NIDELVIR // CORE</span>
               <div className="flex items-center gap-2"><Hash size={10}/> v4.9.112-core</div>
-              <div className="flex items-center gap-2"><Activity size={10}/> All Systems Nominal</div>
+              <div className="flex items-center gap-2"><Activity size={10}/> The Forge Burns</div>
             </div>
           </div>
         </aside>

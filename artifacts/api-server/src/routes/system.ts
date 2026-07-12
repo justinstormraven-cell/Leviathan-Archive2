@@ -45,7 +45,7 @@ router.get("/system/metrics", async (_req, res): Promise<void> => {
     totalModules,
     threatLevel,
     activeRealms,
-    authLevel: "DOCTORAL_ROOT",
+    authLevel: "ALLFATHER_ROOT",
   });
 
   res.json(metrics);

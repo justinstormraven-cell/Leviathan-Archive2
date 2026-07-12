@@ -8,7 +8,7 @@ if (!RAW_SECRET) {
   );
 }
 const SECRET: string = RAW_SECRET;
-export const OPERATOR_NAME = "Leviathan";
+export const OPERATOR_NAME = "Luci Stormraven";
 const TOKEN_TTL_SECONDS = 60 * 60 * 12; // 12 hours
 
 interface TokenPayload {

@@ -22,6 +22,8 @@ tags:
     description: Security audit logs
   - name: terminal
     description: Terminal command execution
+  - name: kernel
+    description: Live kernel core telemetry
 paths:
   /healthz:
     get:
@@ -265,6 +267,20 @@ paths:
                 items:
                   $ref: "#/components/schemas/CommandResult"
 
+  /kernel/log:
+    get:
+      operationId: getKernelLog
+      tags: [kernel]
+      summary: Live kernel and hardened-core boot log
+      description: Real kernel/system facts gathered live from the host (uname, /proc, mounts, crypto flags).
+      responses:
+        "200":
+          description: Kernel log snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KernelLog"
+
 components:
   schemas:
     HealthStatus:
@@ -274,6 +290,45 @@ components:
           type: string
       required:
         - status
+
+    KernelLogLine:
+      type: object
+      required:
+        - seq
+        - timestamp
+        - level
+        - subsystem
+        - message
+      properties:
+        seq:
+          type: integer
+        timestamp:
+          type: number
+        level:
+          type: string
+        subsystem:
+          type: string
+        message:
+          type: string
+
+    KernelLog:
+      type: object
+      required:
+        - kernelVersion
+        - hostname
+        - capturedAt
+        - lines
+      properties:
+        kernelVersion:
+          type: string
+        hostname:
+          type: string
+        capturedAt:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/KernelLogLine"
 
     SystemMetrics:
       type: object

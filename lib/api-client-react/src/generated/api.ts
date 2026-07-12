@@ -28,6 +28,7 @@ import type {
   ErrorResponse,
   GetAuditLogsParams,
   HealthStatus,
+  KernelLog,
   LoginInput,
   Module,
   ModuleUpdate,
@@ -966,6 +967,84 @@ export function useGetTerminalHistory<TData = Awaited<ReturnType<typeof getTermi
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetTerminalHistoryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetKernelLogUrl = () => {
+
+
+
+
+  return `/api/kernel/log`
+}
+
+/**
+ * Real kernel/system facts gathered live from the host (uname, /proc, mounts, crypto flags).
+ * @summary Live kernel and hardened-core boot log
+ */
+export const getKernelLog = async ( options?: RequestInit): Promise<KernelLog> => {
+
+  return customFetch<KernelLog>(getGetKernelLogUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetKernelLogQueryKey = () => {
+    return [
+    `/api/kernel/log`
+    ] as const;
+    }
+
+
+export const getGetKernelLogQueryOptions = <TData = Awaited<ReturnType<typeof getKernelLog>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getKernelLog>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetKernelLogQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getKernelLog>>> = ({ signal }) => getKernelLog({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getKernelLog>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetKernelLogQueryResult = NonNullable<Awaited<ReturnType<typeof getKernelLog>>>
+export type GetKernelLogQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Live kernel and hardened-core boot log
+ */
+
+export function useGetKernelLog<TData = Awaited<ReturnType<typeof getKernelLog>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getKernelLog>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetKernelLogQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
