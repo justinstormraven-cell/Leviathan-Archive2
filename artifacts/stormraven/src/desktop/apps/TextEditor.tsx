@@ -13,7 +13,10 @@ export default function TextEditor({ win }: { win?: WinInstance }) {
   const { token } = useAuth();
   if (!token)
     return <LoginGate title="Text Editor" subtitle="Authenticate to edit files" />;
-  return <EditorInner initialPath={(win?.payload?.path as string) || ""} />;
+  const path = (win?.payload?.path as string) || "";
+  // Editor windows are single-instance; when Files sends a new path to the
+  // already-open editor, remount so the new file actually loads.
+  return <EditorInner key={path} initialPath={path} />;
 }
 
 function EditorInner({ initialPath }: { initialPath: string }) {

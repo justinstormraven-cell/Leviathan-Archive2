@@ -8,7 +8,7 @@ import {
   useGetAuditLogs 
 } from "@workspace/api-client-react";
 import { Activity, Cpu, Server, ShieldAlert, Zap } from "lucide-react";
-import { Link } from "wouter";
+import { PageLink } from "@/desktop/PageLink";
 
 export default function Dashboard() {
   const { data: metrics } = useGetSystemMetrics({
@@ -91,7 +91,7 @@ export default function Dashboard() {
               <h2 className="text-sm font-bold tracking-widest text-primary flex items-center gap-2">
                 <Zap size={14} /> YGGDRASIL TOPOLOGY
               </h2>
-              <Link href="/realms" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">View All</Link>
+              <PageLink href="/realms" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">View All</PageLink>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -124,7 +124,7 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-2">
                 <h2 className="text-sm font-bold tracking-widest text-primary">THE FORGE</h2>
-                <Link href="/modules" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Manage</Link>
+                <PageLink href="/modules" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Manage</PageLink>
               </div>
               <div className="flex flex-col gap-2">
                 {modules?.slice(0, 4).map(module => (
@@ -144,7 +144,7 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-2">
                 <h2 className="text-sm font-bold tracking-widest text-primary">MIMIR // LEDGER</h2>
-                <Link href="/audit" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Logs</Link>
+                <PageLink href="/audit" className="text-xs text-muted-foreground hover:text-primary uppercase tracking-wider">Logs</PageLink>
               </div>
               <div className="flex flex-col gap-2 font-mono text-xs">
                 {audits?.map(log => (
