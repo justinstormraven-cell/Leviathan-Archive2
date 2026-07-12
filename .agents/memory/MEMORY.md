@@ -1,0 +1,1 @@
+- [StormRaven real shell](stormraven-real-shell.md) — the terminal & module toggles run REAL host commands/processes gated by operator auth; never weaken or ungate.
