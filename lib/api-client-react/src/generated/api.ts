@@ -35,6 +35,8 @@ import type {
   GetFsReadParams,
   HealthStatus,
   KernelLog,
+  LeviathanChatInput,
+  LeviathanChatResult,
   LoginInput,
   Module,
   ModuleUpdate,
@@ -1457,4 +1459,76 @@ export function useGetPackages<TData = Awaited<ReturnType<typeof getPackages>>, 
 
 
 
+
+export const getLeviathanChatUrl = () => {
+
+
+
+
+  return `/api/leviathan/chat`
+}
+
+/**
+ * Sends the conversation so far to Leviathan and returns its reply. Auth required.
+ * @summary Converse with the Leviathan operator intelligence
+ */
+export const leviathanChat = async (leviathanChatInput: LeviathanChatInput, options?: RequestInit): Promise<LeviathanChatResult> => {
+
+  return customFetch<LeviathanChatResult>(getLeviathanChatUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(leviathanChatInput)
+  }
+);}
+
+
+
+
+
+export const getLeviathanChatMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leviathanChat>>, TError,{data: BodyType<LeviathanChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof leviathanChat>>, TError,{data: BodyType<LeviathanChatInput>}, TContext> => {
+
+const mutationKey = ['leviathanChat'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof leviathanChat>>, {data: BodyType<LeviathanChatInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  leviathanChat(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LeviathanChatMutationResult = NonNullable<Awaited<ReturnType<typeof leviathanChat>>>
+    export type LeviathanChatMutationBody = BodyType<LeviathanChatInput>
+    export type LeviathanChatMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Converse with the Leviathan operator intelligence
+ */
+export const useLeviathanChat = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof leviathanChat>>, TError,{data: BodyType<LeviathanChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof leviathanChat>>,
+        TError,
+        {data: BodyType<LeviathanChatInput>},
+        TContext
+      > => {
+      return useMutation(getLeviathanChatMutationOptions(options));
+    }
 

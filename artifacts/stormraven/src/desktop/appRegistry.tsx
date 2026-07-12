@@ -11,6 +11,7 @@ import {
   Hammer,
   ShieldAlert,
   Binary,
+  Waves,
 } from "lucide-react";
 
 import Files from "./apps/Files";
@@ -19,6 +20,7 @@ import TextEditor from "./apps/TextEditor";
 import SystemMonitor from "./apps/SystemMonitor";
 import Software from "./apps/Software";
 import Settings from "./apps/Settings";
+import Leviathan from "./apps/Leviathan";
 
 import Dashboard from "@/pages/Dashboard";
 import Realms from "@/pages/Realms";
@@ -148,6 +150,16 @@ export const APPS: AppDef[] = [
     component: Kernel,
     defaultSize: { width: 860, height: 600 },
     dock: false,
+    category: "Nidelvir",
+  },
+  {
+    id: "leviathan",
+    name: "Leviathan",
+    icon: Waves,
+    gradient: "from-cyan-400/30 to-indigo-700/25",
+    component: Leviathan,
+    defaultSize: { width: 720, height: 620 },
+    dock: true,
     category: "Nidelvir",
   },
 ];

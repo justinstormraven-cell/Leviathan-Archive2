@@ -30,6 +30,8 @@ tags:
     description: Live process monitoring
   - name: packages
     description: Software package catalog
+  - name: leviathan
+    description: Leviathan operator intelligence
 paths:
   /healthz:
     get:
@@ -388,8 +390,60 @@ paths:
               schema:
                 $ref: "#/components/schemas/PackageList"
 
+  /leviathan/chat:
+    post:
+      operationId: leviathanChat
+      tags: [leviathan]
+      summary: Converse with the Leviathan operator intelligence
+      description: Sends the conversation so far to Leviathan and returns its reply. Auth required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeviathanChatInput"
+      responses:
+        "200":
+          description: Leviathan reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeviathanChatResult"
+
 components:
   schemas:
+    ChatMessage:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+
+    LeviathanChatInput:
+      type: object
+      required:
+        - messages
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+
+    LeviathanChatResult:
+      type: object
+      required:
+        - reply
+      properties:
+        reply:
+          type: string
+        model:
+          type: string
+
     HealthStatus:
       type: object
       properties:

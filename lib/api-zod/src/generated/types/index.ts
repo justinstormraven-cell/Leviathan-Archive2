@@ -9,6 +9,8 @@
 export * from './auditLog';
 export * from './authStatus';
 export * from './authToken';
+export * from './chatMessage';
+export * from './chatMessageRole';
 export * from './commandInput';
 export * from './commandResult';
 export * from './errorResponse';
@@ -23,6 +25,8 @@ export * from './getFsReadParams';
 export * from './healthStatus';
 export * from './kernelLog';
 export * from './kernelLogLine';
+export * from './leviathanChatInput';
+export * from './leviathanChatResult';
 export * from './loginInput';
 export * from './module';
 export * from './moduleUpdate';

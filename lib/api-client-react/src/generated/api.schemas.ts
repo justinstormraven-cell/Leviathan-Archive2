@@ -5,6 +5,28 @@
  * StormRaven OS API
  * OpenAPI spec version: 0.1.0
  */
+export type ChatMessageRole = typeof ChatMessageRole[keyof typeof ChatMessageRole];
+
+
+export const ChatMessageRole = {
+  user: 'user',
+  assistant: 'assistant',
+} as const;
+
+export interface ChatMessage {
+  role: ChatMessageRole;
+  content: string;
+}
+
+export interface LeviathanChatInput {
+  messages: ChatMessage[];
+}
+
+export interface LeviathanChatResult {
+  reply: string;
+  model?: string;
+}
+
 export interface HealthStatus {
   status: string;
 }

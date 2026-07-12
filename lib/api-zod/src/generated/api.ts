@@ -311,3 +311,20 @@ export const GetPackagesResponse = zod.object({
 })
 
 
+/**
+ * Sends the conversation so far to Leviathan and returns its reply. Auth required.
+ * @summary Converse with the Leviathan operator intelligence
+ */
+export const LeviathanChatBody = zod.object({
+  "messages": zod.array(zod.object({
+  "role": zod.enum(['user', 'assistant']),
+  "content": zod.string()
+}))
+})
+
+export const LeviathanChatResponse = zod.object({
+  "reply": zod.string(),
+  "model": zod.string().optional()
+})
+
+

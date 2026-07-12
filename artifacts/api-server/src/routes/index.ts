@@ -10,6 +10,7 @@ import kernelRouter from "./kernel";
 import fsRouter from "./fs";
 import monitorRouter from "./monitor";
 import packagesRouter from "./packages";
+import leviathanRouter from "./leviathan";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(terminalRouter);
 router.use(fsRouter);
 router.use(monitorRouter);
 router.use(packagesRouter);
+router.use(leviathanRouter);
 
 export default router;
