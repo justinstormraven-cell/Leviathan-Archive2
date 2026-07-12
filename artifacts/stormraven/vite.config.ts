@@ -29,6 +29,15 @@ if (!basePath) {
 
 export default defineConfig({
   base: basePath,
+  // react-rnd (via react-draggable) references `process.env.DRAGGABLE_DEBUG`
+  // unguarded, which throws "Can't find variable: process" in the browser.
+  // Replace it (and NODE_ENV) at build time so no bare `process` survives.
+  define: {
+    'process.env.DRAGGABLE_DEBUG': 'false',
+    'process.env.NODE_ENV': JSON.stringify(
+      process.env.NODE_ENV ?? 'development',
+    ),
+  },
   plugins: [
     react(),
     tailwindcss(),

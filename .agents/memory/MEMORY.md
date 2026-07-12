@@ -1,2 +1,3 @@
 - [StormRaven real shell](stormraven-real-shell.md) — the terminal & module toggles run REAL host commands/processes gated by operator auth; never weaken or ungate.
 - [StormRaven / Nidelvir brand](stormraven-brand.md) — copper-on-slate Norse forge identity; canonical page→myth name map; keep all nomenclature mythological.
+- [Vite bare-process crash](stormraven-vite-process-shim.md) — deps (e.g. react-rnd) with unguarded `process.env.*` crash the browser; fix with targeted `define` in vite.config.
