@@ -42,7 +42,7 @@ export default function TopBar() {
         data-testid="button-activities"
       >
         <LayoutGrid size={13} />
-        <span className="font-medium">Activities</span>
+        <span className="font-medium hidden sm:inline">Activities</span>
       </button>
 
       {/* center: clock */}
@@ -50,14 +50,14 @@ export default function TopBar() {
         onClick={() => setShowActivities(!showActivities)}
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 px-2 py-0.5 rounded-md hover:bg-white/10 text-foreground/90"
       >
-        <span className="text-muted-foreground">{date}</span>
+        <span className="text-muted-foreground hidden sm:inline">{date}</span>
         <span className="font-medium tabular-nums">{time}</span>
       </button>
 
       {/* right: indicators */}
       <div className="flex items-center gap-1">
         {/* workspaces */}
-        <div className="flex items-center gap-1 mr-1">
+        <div className="hidden sm:flex items-center gap-1 mr-1">
           {Array.from({ length: workspaceCount }).map((_, i) => (
             <button
               key={i}

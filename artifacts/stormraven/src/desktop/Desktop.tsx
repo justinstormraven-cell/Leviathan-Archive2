@@ -6,6 +6,7 @@ import WindowFrame from "./WindowFrame";
 import TopBar from "./TopBar";
 import Dock from "./Dock";
 import Activities from "./Activities";
+import { useIsMobile } from "./useIsMobile";
 import type { Rect, WinInstance } from "./types";
 import {
   applyAccent,
@@ -17,6 +18,7 @@ import {
 
 const WORKSPACE_COUNT = 4;
 const TOPBAR_H = 32;
+const MOBILE_DOCK_H = 60;
 
 export default function Desktop() {
   return (
@@ -32,6 +34,7 @@ function DesktopShell() {
   const [showActivities, setShowActivities] = useState(false);
   const [area, setArea] = useState({ width: 1280, height: 720 });
   const [wallId, setWallId] = useState(() => savedWallpaperId());
+  const isMobile = useIsMobile();
 
   const zCounter = useRef(10);
   const idCounter = useRef(0);
@@ -200,8 +203,8 @@ function DesktopShell() {
         {/* windows layer (below the top bar) */}
         <div
           ref={layerRef}
-          className="absolute inset-x-0 bottom-0"
-          style={{ top: TOPBAR_H }}
+          className="absolute inset-x-0"
+          style={{ top: TOPBAR_H, bottom: isMobile ? MOBILE_DOCK_H : 0 }}
         >
           {windows
             .filter((w) => w.workspace === workspace)
