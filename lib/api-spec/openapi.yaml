@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: StormRaven OS API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Operator authentication
+  - name: system
+    description: System metrics and status
+  - name: realms
+    description: Yggdrasil realm operations
+  - name: modules
+    description: Module management
+  - name: audit
+    description: Security audit logs
+  - name: terminal
+    description: Terminal command execution
 paths:
   /healthz:
     get:
@@ -24,6 +36,235 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Authenticate operator and receive an access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthToken"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getAuthStatus
+      tags: [auth]
+      summary: Verify the current access token
+      responses:
+        "200":
+          description: Token valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /system/metrics:
+    get:
+      operationId: getSystemMetrics
+      tags: [system]
+      summary: Get live system metrics
+      description: Returns memory, CPU, uptime, active module count, and threat level
+      responses:
+        "200":
+          description: System metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemMetrics"
+
+  /realms:
+    get:
+      operationId: getRealms
+      tags: [realms]
+      summary: List all Yggdrasil realms
+      responses:
+        "200":
+          description: List of realms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Realm"
+
+  /realms/{id}:
+    get:
+      operationId: getRealm
+      tags: [realms]
+      summary: Get a specific realm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Realm details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Realm"
+        "404":
+          description: Realm not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /modules:
+    get:
+      operationId: getModules
+      tags: [modules]
+      summary: List all modules
+      responses:
+        "200":
+          description: List of modules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Module"
+
+  /modules/{id}:
+    get:
+      operationId: getModule
+      tags: [modules]
+      summary: Get a specific module
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Module detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "404":
+          description: Module not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateModule
+      tags: [modules]
+      summary: Update module status (activate/deactivate)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModuleUpdate"
+      responses:
+        "200":
+          description: Updated module
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "404":
+          description: Module not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /audit-logs:
+    get:
+      operationId: getAuditLogs
+      tags: [audit]
+      summary: List security audit logs
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: severity
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of audit log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
+  /terminal:
+    post:
+      operationId: executeCommand
+      tags: [terminal]
+      summary: Execute a terminal command
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommandInput"
+      responses:
+        "200":
+          description: Command output
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommandResult"
+
+  /terminal/history:
+    get:
+      operationId: getTerminalHistory
+      tags: [terminal]
+      summary: Get terminal command history
+      responses:
+        "200":
+          description: List of executed commands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommandResult"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +275,189 @@ components:
       required:
         - status
 
+    SystemMetrics:
+      type: object
+      required:
+        - memoryPercent
+        - cpuPercent
+        - uptimeSeconds
+        - activeModules
+        - totalModules
+        - threatLevel
+        - activeRealms
+        - authLevel
+      properties:
+        memoryPercent:
+          type: number
+        cpuPercent:
+          type: number
+        uptimeSeconds:
+          type: integer
+        activeModules:
+          type: integer
+        totalModules:
+          type: integer
+        threatLevel:
+          type: string
+        activeRealms:
+          type: integer
+        authLevel:
+          type: string
+
+    Realm:
+      type: object
+      required:
+        - id
+        - name
+        - codename
+        - status
+        - description
+        - mountPath
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        codename:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        mountPath:
+          type: string
+        diskUsagePercent:
+          type: ["number", "null"]
+        activeProcesses:
+          type: ["integer", "null"]
+
+    Module:
+      type: object
+      required:
+        - id
+        - name
+        - codename
+        - realmId
+        - realmName
+        - status
+        - description
+        - authLevel
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        codename:
+          type: string
+        realmId:
+          type: integer
+        realmName:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        authLevel:
+          type: string
+        lastActivated:
+          type: ["string", "null"]
+        pid:
+          type: ["integer", "null"]
+        command:
+          type: ["string", "null"]
+
+    ModuleUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+
+    AuditLog:
+      type: object
+      required:
+        - id
+        - timestamp
+        - eventType
+        - severity
+        - message
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+        eventType:
+          type: string
+        severity:
+          type: string
+        message:
+          type: string
+        realmName:
+          type: ["string", "null"]
+        moduleName:
+          type: ["string", "null"]
+
+    CommandInput:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+
+    CommandResult:
+      type: object
+      required:
+        - id
+        - command
+        - output
+        - exitCode
+        - executedAt
+      properties:
+        id:
+          type: integer
+        command:
+          type: string
+        output:
+          type: string
+        exitCode:
+          type: integer
+        executedAt:
+          type: string
+
+    LoginInput:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+
+    AuthToken:
+      type: object
+      required:
+        - token
+        - operator
+      properties:
+        token:
+          type: string
+        operator:
+          type: string
+
+    AuthStatus:
+      type: object
+      required:
+        - authenticated
+        - operator
+      properties:
+        authenticated:
+          type: boolean
+        operator:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string

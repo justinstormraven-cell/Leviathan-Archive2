@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "StormRaven OS"
+version = "1.0.0"
+id = "artifacts/stormraven"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21704
+
+[services.development]
+run = "pnpm --filter @workspace/stormraven run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stormraven", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/stormraven/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21704"
+BASE_PATH = "/"
