@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "StormRaven OS",
-    "slug": "mobile",
+    "slug": "stormraven",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -35,6 +35,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "21767c2c-d757-4153-a491-4db5b28663fa"
+      }
+    },
+    "owner": "faithstormravens-team"
   }
 }
