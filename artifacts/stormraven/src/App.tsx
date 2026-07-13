@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Router as WouterRouter } from 'wouter';
-import Desktop from '@/desktop/Desktop';
+import ReplitAuthGate from '@/desktop/ReplitAuthGate';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +14,7 @@ function App() {
             when rendered as windowed apps; routing itself is handled by the
             StormRaven desktop shell. */}
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Desktop />
+          <ReplitAuthGate />
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

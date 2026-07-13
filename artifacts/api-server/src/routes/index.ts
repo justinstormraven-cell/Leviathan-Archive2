@@ -11,6 +11,7 @@ import fsRouter from "./fs";
 import monitorRouter from "./monitor";
 import packagesRouter from "./packages";
 import leviathanRouter from "./leviathan";
+import replitAuthRouter from "./replitAuth";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(fsRouter);
 router.use(monitorRouter);
 router.use(packagesRouter);
 router.use(leviathanRouter);
+router.use(replitAuthRouter);
 
 export default router;

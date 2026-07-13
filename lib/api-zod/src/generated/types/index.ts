@@ -7,12 +7,17 @@
  */
 
 export * from './auditLog';
+export * from './authorizationSessionHeaderParameter';
 export * from './authStatus';
 export * from './authToken';
+export * from './authUser';
+export * from './authUserEnvelope';
+export * from './beginBrowserLoginParams';
 export * from './chatMessage';
 export * from './chatMessageRole';
 export * from './commandInput';
 export * from './commandResult';
+export * from './errorEnvelope';
 export * from './errorResponse';
 export * from './fsEntry';
 export * from './fsFile';
@@ -22,12 +27,17 @@ export * from './fsWriteResult';
 export * from './getAuditLogsParams';
 export * from './getFsListParams';
 export * from './getFsReadParams';
+export * from './handleBrowserLoginCallbackParams';
 export * from './healthStatus';
 export * from './kernelLog';
 export * from './kernelLogLine';
 export * from './leviathanChatInput';
 export * from './leviathanChatResult';
 export * from './loginInput';
+export * from './logoutBrowserSessionParams';
+export * from './logoutSuccess';
+export * from './mobileTokenExchangeRequest';
+export * from './mobileTokenExchangeSuccess';
 export * from './module';
 export * from './moduleUpdate';
 export * from './packageInfo';

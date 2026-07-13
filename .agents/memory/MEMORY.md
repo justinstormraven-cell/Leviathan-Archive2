@@ -2,4 +2,5 @@
 - [StormRaven / Nidelvir brand](stormraven-brand.md) — copper-on-slate Norse forge identity; canonical page→myth name map; keep all nomenclature mythological.
 - [Vite bare-process crash](stormraven-vite-process-shim.md) — deps (e.g. react-rnd) with unguarded `process.env.*` crash the browser; fix with targeted `define` in vite.config.
 - [Desktop windowing constraints](stormraven-windowing.md) — legacy pages render only inside windows so wouter Links are dead (use openApp/PageLink); single-instance apps must remount on payload change.
+- [Two auth layers](stormraven-auth-layers.md) — Replit Auth = frontend-only "front door" (non-blocking middleware); operator password stays the ONLY gate on real-shell APIs; installed under renamed files; no zod v3 `format:` in openapi.
 - [AI / Leviathan integration](stormraven-ai-integration.md) — Replit-managed OpenAI (no key, bills credits); orval can't codegen SSE so AI endpoints are non-streaming JSON; gpt-5.4 uses max_completion_tokens, no temperature.
