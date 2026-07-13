@@ -1,0 +1,59 @@
+Ymir: Primordial Hardened Kernel Specification
+System Taxonomy: The Low-Level Foundation (Ymir Core)
+In the StormRaven Operating Environment, Ymir is the custom-compiled, hardened Linux kernel. It serves as the physical substrate, establishing the boundary conditions for all memory operations, device communications, and cryptographic boundaries.
+1. Architectural Design Principles
+The Ymir Kernel is compiled from modern Long-Term Support (LTS) sources with strict enforcement of the following paradigms:
+A. Volatile RAM-Resident Root (Midgard Execution)
+To prevent cold-boot forensics and ensure complete isolation, Ymir natively builds and executes from an initramfs (Initial RAM Filesystem) that mounts a tmpfs overlay.
+￼ No write-backs to persistent disks are permitted unless explicitly authenticated via Luci hardware keys.
+￼ The system runs entirely within volatile memory; once power is terminated, the entire user-space state is unrecoverable.
+B. Defense-in-Depth Cryptographic Pipeline
+￼ Built-in Cryptographic Modules: High-performance cipher suites (AES-NI, ChaCha20-Poly1305, SHA-512, and dm-crypt) are compiled directly into the kernel core (⁠=y⁠) rather than loaded as modules (⁠=m⁠) to guarantee immediate availability at boot and prevent module hijacking.
+￼ Randomness Injection: Integration of CPU-level hardware random number generators (RDRAND/RDSEED) combined with software entropy harvesters to feed the kernel entropy pool immediately on initialization.
+C. Zero-Trust Module Architecture
+￼ Unsigned module loading is prohibited (⁠CONFIG_MODULE_SIG_FORCE=y⁠).
+￼ Kernel module loading can be disabled entirely after system boot is completed via sysctl (⁠kernel.modules_disabled = 1⁠).
+2. Kernel Self-Protection Project (KSPP) Configuration Matrix
+The following configuration flags represent the cryptographic and memory protections enforced during Ymir's compilation:
+Config Option
+Targeted Value
+Vulnerability Mitigation
+CONFIG_KASLR
+y
+Randomizes kernel memory layout on boot to defeat ROP chains
+CONFIG_STRICT_KERNEL_RWX
+y
+Enforces strict read/write/execute memory page permissions
+CONFIG_STRICT_MODULE_RWX
+y
+Prevents data modification in system module instruction spaces
+CONFIG_PAGE_POISONING
+y
+Zeroes out memory pages immediately upon deallocation
+CONFIG_SLAB_FREELIST_RANDOM
+y
+Randomizes the slab allocator to prevent heap layout predictability
+CONFIG_SLAB_FREELIST_HARDENED
+y
+Adds metadata validation checks to detect slab corruption
+CONFIG_SECCOMP
+y
+Enables syscall restriction filter support
+CONFIG_SECCOMP_FILTER
+y
+Restricts unprivileged system call executions
+CONFIG_SECURITY_YAMA
+y
+Prevents unauthorized inter-process ptrace attachment
+CONFIG_PANIC_ON_OOPS
+y
+Forces an immediate kernel panic on error to block exploitation
+
+3. High-Performance Network & Anonymity Pipeline
+To support the native features of network modules like Sleipnir (MAC shuffling/WireGuard routing) and Jörmungandr (network quarantine), Ymir incorporates native capabilities:
+￼ In-Kernel WireGuard: ⁠CONFIG_WIREGUARD=y⁠ ensures that Virtual Private Network endpoints run with maximum performance inside the kernel space, bypassing user-space performance overheads.
+￼ Netfilter State Tracking: Highly modular iptables/nftables drivers are compiled to allow the dynamic firewall synthesis engine (Gungnir) to build real-time rate limiters.
+￼ TCP BBR Congestion Control: Native support for BBR (Bottleneck Bandwidth and RTT) to maximize connection performance over encrypted proxy tunnels.
+4. Boot & Runtime Security Parameters (Sysctl Tuning)
+At boot time, the following parameters are enforced to eliminate typical network and execution attack vectors:
+Through this rigorous configuration, Ymir creates a secure, resilient, and forensic-resistant harbor for the StormRaven Operating Environment.

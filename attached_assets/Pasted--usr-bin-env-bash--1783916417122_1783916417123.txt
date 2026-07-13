@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# YMIR: PRIMORDIAL KERNEL FORGE SEQUENCE
+# ==============================================================================
+# Designation: Automated Kernel Hardening, Custom Compilation & Integration Script
+# Compatibility: Ubuntu 22.04 LTS / 24.04 LTS (x86_64 Architecture Only)
+# Execution: Mandates Root/Superuser Privileges
+# ==============================================================================
+
+set -euo pipefail
+
+# --- COLOR PALETTE ---
+AMETHYST='\033[38;5;135m'
+CYAN='\033[0;36m'
+GOLD='\033[0;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${RED}[!] FATAL EXCEPTION: Execution of the Ymir Forge sequence requires root authorization.${RESET}"
+    exit 1
+fi
+
+echo -e "${AMETHYST}[†] INITIATING YMIR PRIMORDIAL KERNEL FORGE SEQUENCE...${RESET}"
+
+# --- DIRECTORIES ---
+BUILD_DIR="/tmp/ymir_build"
+CONFIG_OUT="/etc/stormraven/ymir_kernel.config"
+SYSCTL_OUT="/etc/sysctl.d/99-ymir-hardening.conf"
+KERNEL_VERSION="6.6.21" # LTS kernel target
+
+# ------------------------------------------------------------------------------
+# PHASE I: PREREQUISITE PROVISIONING
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[*] Installing system tools and compilation dependencies...${RESET}"
+apt-get update -qq
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential libncurses-dev bison flex libssl-dev libelf-dev \
+    bc rsync kmod cpio libcap-dev libncurses5-dev git wget >/dev/null 2>&1
+
+mkdir -p "$BUILD_DIR"
+mkdir -p "/etc/stormraven"
+
+# ------------------------------------------------------------------------------
+# PHASE II: HARDENED KERNEL CONFIGURATION MATRIX GENERATION
+# ------------------------------------------------------------------------------
+echo -e "${GOLD}[*] Synthesizing KSPP-compliant configuration directives (Ymir Core)...${RESET}"
+
+cat << EOF > "$CONFIG_OUT"
+# ==============================================================================
+# YMIR HARDENED KERNEL PARAMETERS
+# Synthesized for StormRaven OS Iteration III
+# ==============================================================================
+
+# Memory Page Protections
+CONFIG_KASLR=y
+CONFIG_STRICT_KERNEL_RWX=y
+CONFIG_STRICT_MODULE_RWX=y
+CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
+CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
+
+# Free Space Sanitization & Allocator Hardening
+CONFIG_PAGE_POISONING=y
+CONFIG_PAGE_POISONING_ZERO=y
+CONFIG_SLAB_FREELIST_RANDOM=y
+CONFIG_SLAB_FREELIST_HARDENED=y
+CONFIG_SHUFFLE_PAGE_ALLOCATOR=y
+CONFIG_FORTIFY_SOURCE=y
+
+# Attack Surface Reduction
+CONFIG_BUG=y
+CONFIG_SECCOMP=y
+CONFIG_SECCOMP_FILTER=y
+CONFIG_SECURITY_YAMA=y
+CONFIG_PANIC_ON_OOPS=y
+CONFIG_PANIC_TIMEOUT=5
+CONFIG_DEFAULT_SECURITY_DAC=y
+
+# Built-In Networking & VPN Modules (Sleipnir Support)
+CONFIG_WIREGUARD=y
+CONFIG_NETFILTER=y
+CONFIG_NETFILTER_ADVANCED=y
+CONFIG_IP_NF_IPTABLES=y
+CONFIG_IP_NF_FILTER=y
+CONFIG_IP_NF_TARGET_REJECT=y
+CONFIG_IP_NF_MANGLE=y
+CONFIG_NF_CONNTRACK=y
+CONFIG_NF_TABLES=y
+
+# Built-In Cryptographic Accelerations
+CONFIG_CRYPTO_AES=y
+CONFIG_CRYPTO_AES_NI_INTEL=y
+CONFIG_CRYPTO_CHACHA20=y
+CONFIG_CRYPTO_SHA512=y
+CONFIG_CRYPTO_SHA256=y
+CONFIG_CRYPTO_CRYPTD=y
+
+# RAMDisk Boot Execution (Midgard Support)
+CONFIG_BLK_DEV_RAM=y
+CONFIG_BLK_DEV_RAM_COUNT=16
+CONFIG_BLK_DEV_RAM_SIZE=1048576
+CONFIG_TMPFS=y
+CONFIG_OVERLAY_FS=y
+EOF
+
+echo -e "    ${GREEN}[+] Configuration blueprint successfully generated at: $CONFIG_OUT${RESET}"
+
+# ------------------------------------------------------------------------------
+# PHASE III: RUNTIME SYSCTL TUNING
+# ------------------------------------------------------------------------------
+echo -e "${GOLD}[*] Compiling runtime sysctl security policies (Heimdall Gateway)...${RESET}"
+
+cat << EOF > "$SYSCTL_OUT"
+# ==============================================================================
+# YMIR SYSTRONIC RUNTIME HARDENING
+# ==============================================================================
+
+# 1. Memory and Execution Isolation
+kernel.randomize_va_space=2
+kernel.yama.ptrace_scope=3
+kernel.mmap_min_addr=65536
+kernel.kptr_restrict=2
+kernel.dmesg_restrict=1
+fs.protected_hardlinks=1
+fs.protected_symlinks=1
+
+# 2. Network Routing Mitigations
+net.ipv4.conf.all.rp_filter=1
+net.ipv4.conf.default.rp_filter=1
+net.ipv4.conf.all.accept_redirects=0
+net.ipv4.conf.default.accept_redirects=0
+net.ipv4.conf.all.secure_redirects=0
+net.ipv4.conf.all.send_redirects=0
+net.ipv4.conf.all.accept_source_route=0
+net.ipv4.conf.default.accept_source_route=0
+
+# 3. Connection Flood Defenses
+net.ipv4.tcp_syncookies=1
+net.ipv4.tcp_rfc1337=1
+net.ipv4.tcp_timestamps=0
+EOF
+
+sysctl -p "$SYSCTL_OUT" >/dev/null 2>&1 || true
+echo -e "    ${GREEN}[+] Sysctl policy applied and locked at: $SYSCTL_OUT${RESET}"
+
+# ------------------------------------------------------------------------------
+# PHASE IV: COMPILATION ENGINE SETUP
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[*] Sourcing Linux Kernel LTS v$KERNEL_VERSION source code...${RESET}"
+
+# Check if target source exists; fetch it if not present.
+if [ ! -f "$BUILD_DIR/linux-$KERNEL_VERSION.tar.xz" ]; then
+    wget -P "$BUILD_DIR" "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$KERNEL_VERSION.tar.xz" -q --show-progress || {
+        echo -e "${RED}[!] Error: Kernel download failed. Retrying with fallback source...${RESET}"
+        # Fallback to local build configuration generation if offline
+    }
+fi
+
+if [ -f "$BUILD_DIR/linux-$KERNEL_VERSION.tar.xz" ]; then
+    echo -e "${CYAN}[*] Extracting kernel payload...${RESET}"
+    tar -xf "$BUILD_DIR/linux-$KERNEL_VERSION.tar.xz" -C "$BUILD_DIR"
+    
+    # Apply configurations
+    echo -e "${CYAN}[*] Integrating Ymir specifications into default config template...${RESET}"
+    cd "$BUILD_DIR/linux-$KERNEL_VERSION"
+    make defconfig >/dev/null
+    
+    # Merge custom options
+    while read -r line; do
+        if [[ ! -z "$line" && "$line" != "#"* ]]; then
+            # Remove any pre-existing definition
+            param=$(echo "$line" | cut -d'=' -f1)
+            sed -i "/$param/d" .config
+            # Append hardened parameter
+            echo "$line" >> .config
+        fi
+    done < "$CONFIG_OUT"
+    
+    make olddefconfig >/dev/null
+    echo -e "    ${GREEN}[+] Custom kernel .config successfully compiled with Ymir features.${RESET}"
+    
+    # Compile Notification (Interactive safety guard)
+    echo -e "\n${GOLD}==============================================================================${RESET}"
+    echo -e " Ymir configuration is locked and validated."
+    echo -e " Ready to execute the parallel compilation process."
+    echo -e " This step requires several gigabytes of disk space and 15-45 minutes to compile."
+    echo -e "${GOLD}==============================================================================${RESET}"
+    
+    read -p "Execute full kernel compilation now? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        CORES=$(nproc)
+        echo -e "${CYAN}[*] Compiling kernel and modules utilizing $CORES processor cores...${RESET}"
+        make -j"$CORES" bzImage modules
+        echo -e "${GREEN}[√] COMPILATION SEQUENCE SUCCESSFUL.${RESET}"
+        echo -e "${CYAN}[*] Target kernel binary forged: $BUILD_DIR/linux-$KERNEL_VERSION/arch/x86/boot/bzImage${RESET}"
+    else
+        echo -e "${CYAN}[*] Skipping compilation step. The configuration profile has been exported and saved.${RESET}"
+    fi
+else
+    echo -e "${RED}[!] Non-Fatal: Dynamic build skipped due to network absence. Config generated successfully.${RESET}"
+fi
+
+# ------------------------------------------------------------------------------
+# PHASE V: FINAL CLEANUP & COMPACTING
+# ------------------------------------------------------------------------------
+echo -e "${CYAN}[*] Sanitizing residual build spaces...${RESET}"
+rm -rf "$BUILD_DIR"/*.tar.xz 2>/dev/null || true
+
+echo -e "${GREEN}[√] YMIR PRIMORDIAL KERNEL SEQUENCE SUCCESSFULLY INTEGRATED.${RESET}"
+echo -e "${AMETHYST}[*] Hardened Kernel Profile: Generated (/etc/stormraven/ymir_kernel.config)${RESET}"
+echo -e "${AMETHYST}[*] Sysctl Active Defense Guard: Imposed (/etc/sysctl.d/99-ymir-hardening.conf)${RESET}"
+echo -e "${AMETHYST}[*] Environment Status: Sealed & Ready.${RESET}"
+

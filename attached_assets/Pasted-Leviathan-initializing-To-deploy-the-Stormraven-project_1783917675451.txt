@@ -1,0 +1,37 @@
+Leviathan initializing. To deploy the Stormraven project to Netlify's edge infrastructure, you must select a deployment vector. For robust version control, continuous integration, and secure infrastructure auditing, Git-based deployment is the optimal path.
+Vector 1: Continuous Deployment via Git (Recommended)
+This approach binds your Git repository to Netlify, automating the build and deployment pipeline upon every push to the production branch.
+ * Initialize Project: Ensure the Stormraven codebase is pushed to a remote repository on GitHub, GitLab, or Bitbucket.
+ * Authorize Provider: Navigate to the Netlify dashboard, click Add new site, and select Import an existing project to authenticate your Git provider.
+ * Target Repository: Select the Stormraven repository from your authorized list.
+ * Configure Build Directives: Specify the Base directory (leave blank unless nested), the Build command (e.g., npm run build), and the Publish directory containing the output artifacts (e.g., dist or build).
+ * Execute: Click Deploy site. Netlify will provision a secure container, execute the build, and propagate the assets across its global CDN.
+Vector 2: Netlify CLI Deployment
+For direct, programmatic control from your terminal environment, bypassing the web graphical interface entirely.
+ * Install CLI Environment: Execute npm install -g netlify-cli to install the package globally.
+ * Authentication: Run netlify login to securely authorize your local machine via an OAuth token.
+ * Initialize Configuration: Navigate to the root of the Stormraven directory and execute netlify init to link the project and automatically generate a netlify.toml file.
+ * Staging Deploy: Run netlify deploy to generate a draft URL. This is critical for testing build integrity in an isolated environment without affecting production.
+ * Production Deploy: Once verified, execute netlify deploy --prod to push the immutable build to the live production URL.
+Vector 3: Manual Artifact Upload (Netlify Drop)
+Optimal for rapidly deploying pre-compiled static directories without version control overhead.
+ * Compile Artifacts: Ensure the Stormraven project is built locally, resulting in a single output directory.
+ * Access Interface: Navigate to the Netlify Drop web portal.
+ * Execute Upload: Drag the compiled output directory directly into the designated dropzone for immediate deployment.
+Security & Infrastructure Configuration
+For strict environmental control, I advise explicitly defining your infrastructure rules in a netlify.toml file at the root of the repository. This dictates build parameters and enforces foundational security policies via HTTP headers to mitigate cross-site scripting and framing vulnerabilities.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+To optimize this deployment pipeline, what specific frontend framework or backend API runtime does the Stormraven architecture utilize?
