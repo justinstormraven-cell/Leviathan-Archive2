@@ -1,9 +1,13 @@
 import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
-import os from "os";
 
-export const FS_HOME = process.env.HOME || "/home/runner/workspace";
+/**
+ * Sandbox root. All filesystem access through this module is confined to this
+ * directory tree. Requests that resolve (or symlink) outside of it are refused.
+ */
+export const FS_ROOT = path.resolve(process.env.FS_ROOT || "/home/runner/workspace");
+export const FS_HOME = FS_ROOT;
 const MAX_READ_BYTES = 512 * 1024; // 512 KB read cap for the editor/viewer
 
 export interface FsEntry {
@@ -33,14 +37,56 @@ function expandHome(target: string): string {
   return target;
 }
 
-/** Resolve an incoming path request to an absolute, normalised path. */
+/** True when `target` is FS_ROOT itself or a descendant of it. */
+function isWithinRoot(target: string): boolean {
+  const rel = path.relative(FS_ROOT, target);
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+}
+
+function outsideRootError(): Error {
+  return Object.assign(new Error("Path is outside the permitted workspace root"), {
+    code: "EACCES",
+  });
+}
+
+function assertWithinRoot(target: string): string {
+  if (!isWithinRoot(target)) throw outsideRootError();
+  return target;
+}
+
+/**
+ * Resolve an incoming path request to an absolute, normalised path, confined to
+ * the sandbox root. Relative paths resolve against FS_ROOT; absolute paths that
+ * escape the root are rejected. This is a lexical check only — callers that
+ * touch the filesystem must additionally use {@link realpathWithinRoot} to
+ * defeat symlink-based escapes.
+ */
 export function resolvePath(input: string | undefined): string {
   const raw = expandHome((input ?? FS_HOME).trim() || FS_HOME);
-  return path.resolve(raw);
+  const resolved = path.resolve(FS_ROOT, raw);
+  return assertWithinRoot(resolved);
+}
+
+/**
+ * Resolve a path's real (symlink-followed) location and assert it stays inside
+ * the sandbox root. When `mustExist` is false the final path component may be
+ * missing (for creating new files); its parent directory is still resolved and
+ * bounds-checked so a symlinked parent cannot escape the root.
+ */
+async function realpathWithinRoot(target: string, mustExist: boolean): Promise<string> {
+  try {
+    return assertWithinRoot(await fsp.realpath(target));
+  } catch (err) {
+    if (!mustExist && (err as { code?: string }).code === "ENOENT") {
+      const parent = await fsp.realpath(path.dirname(target));
+      return assertWithinRoot(path.join(assertWithinRoot(parent), path.basename(target)));
+    }
+    throw err;
+  }
 }
 
 export async function listDirectory(input: string | undefined): Promise<FsListing> {
-  const dir = resolvePath(input);
+  const dir = await realpathWithinRoot(resolvePath(input), true);
   const dirents = await fsp.readdir(dir, { withFileTypes: true });
 
   const entries: FsEntry[] = [];
@@ -54,9 +100,11 @@ export async function listDirectory(input: string | undefined): Promise<FsListin
     let size: number | null = null;
     let modified: string | null = null;
     try {
-      const st = await fsp.stat(full);
+      // lstat: describe the entry itself, never follow a symlink out of root.
+      const st = await fsp.lstat(full);
       if (st.isDirectory()) type = "directory";
       else if (st.isFile()) type = "file";
+      else if (st.isSymbolicLink()) type = "symlink";
       size = st.isFile() ? st.size : null;
       modified = st.mtime.toISOString();
     } catch {
@@ -73,12 +121,13 @@ export async function listDirectory(input: string | undefined): Promise<FsListin
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
   });
 
-  const parent = dir === "/" ? null : path.dirname(dir);
+  // Never expose a parent above the sandbox root.
+  const parent = isWithinRoot(path.dirname(dir)) && dir !== FS_ROOT ? path.dirname(dir) : null;
   return { path: dir, parent, entries };
 }
 
 export async function readFile(input: string): Promise<FsFile> {
-  const target = resolvePath(input);
+  const target = await realpathWithinRoot(resolvePath(input), true);
   const st = await fsp.stat(target);
   if (!st.isFile()) {
     throw Object.assign(new Error("Not a regular file"), { code: "ENOTFILE" });
@@ -99,7 +148,7 @@ export async function writeFile(
   input: string,
   content: string,
 ): Promise<{ path: string; bytes: number }> {
-  const target = resolvePath(input);
+  const target = await realpathWithinRoot(resolvePath(input), false);
   // Refuse to clobber a directory.
   if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
     throw Object.assign(new Error("Target is a directory"), { code: "EISDIR" });
@@ -109,8 +158,5 @@ export async function writeFile(
 }
 
 export const FS_QUICK_LINKS: { label: string; path: string }[] = [
-  { label: "Home", path: FS_HOME },
-  { label: "Workspace", path: "/home/runner/workspace" },
-  { label: "tmp", path: os.tmpdir() },
-  { label: "Root", path: "/" },
+  { label: "Workspace", path: FS_ROOT },
 ];
