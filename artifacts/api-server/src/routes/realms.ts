@@ -4,6 +4,7 @@ import { db, realmsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { GetRealmParams, GetRealmsResponse, GetRealmResponse } from "@workspace/api-zod";
 import { getDiskUsagePercent, getProcessesUnderPath } from "../lib/system-metrics";
+import { requireAuth } from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -28,13 +29,13 @@ async function enrichRealm(realm: RealmRow): Promise<RealmRow> {
   return { ...realm, diskUsagePercent: disk, activeProcesses: procs, status };
 }
 
-router.get("/realms", async (_req, res): Promise<void> => {
+router.get("/realms", requireAuth, async (_req, res): Promise<void> => {
   const realms = await db.select().from(realmsTable).orderBy(realmsTable.id);
   const enriched = await Promise.all(realms.map(enrichRealm));
   res.json(GetRealmsResponse.parse(enriched));
 });
 
-router.get("/realms/:id", async (req, res): Promise<void> => {
+router.get("/realms/:id", requireAuth, async (req, res): Promise<void> => {
   const params = GetRealmParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });

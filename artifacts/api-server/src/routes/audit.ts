@@ -2,10 +2,11 @@ import { Router, type IRouter } from "express";
 import { db, auditLogsTable, realmsTable, modulesTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { GetAuditLogsQueryParams, GetAuditLogsResponse } from "@workspace/api-zod";
+import { requireAuth } from "../lib/auth";
 
 const router: IRouter = Router();
 
-router.get("/audit-logs", async (req, res): Promise<void> => {
+router.get("/audit-logs", requireAuth, async (req, res): Promise<void> => {
   const queryParsed = GetAuditLogsQueryParams.safeParse(req.query);
   if (!queryParsed.success) {
     res.status(400).json({ error: queryParsed.error.message });

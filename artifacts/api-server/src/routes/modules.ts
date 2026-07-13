@@ -80,7 +80,7 @@ function fetchModule(id: number) {
     .where(eq(modulesTable.id, id));
 }
 
-router.get("/modules", async (_req, res): Promise<void> => {
+router.get("/modules", requireAuth, async (_req, res): Promise<void> => {
   const rows = (await db
     .select(moduleSelection)
     .from(modulesTable)
@@ -97,7 +97,7 @@ router.get("/modules", async (_req, res): Promise<void> => {
   res.json(GetModulesResponse.parse(result));
 });
 
-router.get("/modules/:id", async (req, res): Promise<void> => {
+router.get("/modules/:id", requireAuth, async (req, res): Promise<void> => {
   const params = GetModuleParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });

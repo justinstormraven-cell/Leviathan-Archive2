@@ -4,10 +4,11 @@ import { db, modulesTable, realmsTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { GetSystemMetricsResponse } from "@workspace/api-zod";
 import { getCpuPercent } from "../lib/system-metrics";
+import { requireAuth } from "../lib/auth";
 
 const router: IRouter = Router();
 
-router.get("/system/metrics", async (_req, res): Promise<void> => {
+router.get("/system/metrics", requireAuth, async (_req, res): Promise<void> => {
   const totalMem = os.totalmem();
   const freeMem = os.freemem();
   const memPercent = Math.round(((totalMem - freeMem) / totalMem) * 100);
