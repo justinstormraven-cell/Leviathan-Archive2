@@ -8,10 +8,18 @@ import {
   requireAuth,
   OPERATOR_NAME,
 } from "../lib/auth";
+import { rateLimit } from "../lib/rateLimit";
 
 const router: IRouter = Router();
 
-router.post("/auth/login", async (req, res): Promise<void> => {
+// Throttle login attempts per client IP to prevent password brute-forcing.
+const loginRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: "Too many login attempts. Please wait before trying again.",
+});
+
+router.post("/auth/login", loginRateLimit, async (req, res): Promise<void> => {
   const body = LoginBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: "A password is required" });
