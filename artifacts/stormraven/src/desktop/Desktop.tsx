@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DesktopContext } from "./DesktopContext";
 import { AuthProvider } from "./auth";
+import RoeGate from "./RoeGate";
 import { getApp } from "./appRegistry";
 import WindowFrame from "./WindowFrame";
 import TopBar from "./TopBar";
@@ -24,6 +25,7 @@ export default function Desktop() {
   return (
     <AuthProvider>
       <DesktopShell />
+      <RoeGate />
     </AuthProvider>
   );
 }

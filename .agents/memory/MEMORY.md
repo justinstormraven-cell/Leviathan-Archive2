@@ -5,3 +5,5 @@
 - [Two auth layers](stormraven-auth-layers.md) — Replit Auth = frontend-only "front door" (non-blocking middleware); operator password stays the ONLY gate on real-shell APIs; installed under renamed files; no zod v3 `format:` in openapi.
 - [API security hardening](stormraven-api-hardening.md) — CORS is an allowlist (never origin:true+credentials); login stays rate-limited (10/15min per IP via x-forwarded-for).
 - [AI / Leviathan integration](stormraven-ai-integration.md) — Replit-managed OpenAI (no key, bills credits); orval can't codegen SSE so AI endpoints are non-streaming JSON; gpt-5.4 uses max_completion_tokens, no temperature.
+- [orval codegen naming](stormraven-orval-codegen.md) — zod exports are per-OPERATION (`<PascalOperationId>Response/Body`), not per-schema; import shared model types directly, don't derive from a hook's ReturnType (infers `{}`).
+- [RoE / authz enforcement](stormraven-roe-enforcement.md) — authorization policy must be server-side middleware after requireAuth, scoped per operator; a UI overlay alone is bypassable with a valid token.

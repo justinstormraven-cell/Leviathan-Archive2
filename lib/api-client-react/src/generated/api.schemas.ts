@@ -243,6 +243,192 @@ export interface PackageList {
   packages: PackageInfo[];
 }
 
+export interface RoeStatus {
+  version: string;
+  accepted: boolean;
+  /** @nullable */
+  acceptedAt?: string | null;
+  /** @nullable */
+  operator?: string | null;
+  authorizedScope: string;
+  defaultScope: string;
+  laws: string[];
+}
+
+export interface RoeAcceptInput {
+  scopeAcknowledged: boolean;
+  authorizedScope?: string;
+}
+
+export interface RoeAcceptance {
+  version: string;
+  accepted: boolean;
+  acceptedAt: string;
+  operator: string;
+  authorizedScope: string;
+}
+
+export interface IntegrityStatus {
+  watched: number;
+  baselined: number;
+  openAlerts: number;
+  monitoring: boolean;
+  /** @nullable */
+  lastBaselineAt?: string | null;
+}
+
+export interface IntegrityBaselineItem {
+  id: number;
+  path: string;
+  hash: string;
+  sizeBytes: number;
+  /** @nullable */
+  updatedAt?: string | null;
+}
+
+export interface IntegrityBaselineList {
+  baselines: IntegrityBaselineItem[];
+  pending: IntegrityBaselineItem[];
+}
+
+export interface IntegrityAlert {
+  id: number;
+  timestamp: string;
+  path: string;
+  changeType: string;
+  /** @nullable */
+  expectedHash?: string | null;
+  /** @nullable */
+  actualHash?: string | null;
+  severity: string;
+  status: string;
+}
+
+export interface IntegrityScanResult {
+  checked: number;
+  alerts: IntegrityAlert[];
+}
+
+export interface IntegrityAlertUpdate {
+  status: string;
+}
+
+export interface Incident {
+  id: number;
+  timestamp: string;
+  title: string;
+  description: string;
+  category: string;
+  severity: string;
+  status: string;
+  source: string;
+  /** @nullable */
+  acknowledgedAt?: string | null;
+  /** @nullable */
+  acknowledgedBy?: string | null;
+  /** @nullable */
+  resolvedAt?: string | null;
+  /** @nullable */
+  resolvedBy?: string | null;
+  /** @nullable */
+  resolution?: string | null;
+}
+
+export interface IncidentCreate {
+  title: string;
+  description?: string;
+  category?: string;
+  severity?: string;
+}
+
+export interface IncidentUpdate {
+  status: string;
+  resolution?: string;
+}
+
+export interface Anomaly {
+  id: string;
+  type: string;
+  severity: string;
+  detail: string;
+  count: number;
+  detectedAt: string;
+}
+
+export interface AnomalyReport {
+  threatLevel: string;
+  total: number;
+  critical: number;
+  anomalies: Anomaly[];
+}
+
+export interface PostureCheck {
+  id: string;
+  label: string;
+  status: string;
+  detail: string;
+}
+
+export interface DefensePosture {
+  score: number;
+  status: string;
+  threatLevel: string;
+  roeAccepted: boolean;
+  openIncidents: number;
+  openIntegrityAlerts: number;
+  baselinedFiles: number;
+  activeAnomalies: number;
+  checks: PostureCheck[];
+  updatedAt: string;
+}
+
+export interface ComplianceAcceptance {
+  id: number;
+  timestamp: string;
+  operator: string;
+  roeVersion: string;
+  authorizedScope: string;
+  /** @nullable */
+  ipAddress?: string | null;
+}
+
+export type ComplianceReportAudit = {
+  total: number;
+  info: number;
+  success: number;
+  warn: number;
+  critical: number;
+};
+
+export type ComplianceReportIncidents = {
+  total: number;
+  open: number;
+  acknowledged: number;
+  resolved: number;
+};
+
+export type ComplianceReportIntegrity = {
+  baselined: number;
+  openAlerts: number;
+};
+
+export type ComplianceReportPosture = {
+  score: number;
+  status: string;
+  threatLevel: string;
+};
+
+export interface ComplianceReport {
+  generatedAt: string;
+  roeVersion: string;
+  laws: string[];
+  acceptances: ComplianceAcceptance[];
+  audit: ComplianceReportAudit;
+  incidents: ComplianceReportIncidents;
+  integrity: ComplianceReportIntegrity;
+  posture: ComplianceReportPosture;
+}
+
 /**
  * Opaque session token — `Bearer <sid>`.
  */

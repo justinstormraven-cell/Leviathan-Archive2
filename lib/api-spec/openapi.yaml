@@ -534,6 +534,226 @@ paths:
               schema:
                 $ref: '#/components/schemas/LogoutSuccess'
 
+  /roe/status:
+    get:
+      operationId: getRoeStatus
+      tags: [defense]
+      summary: Current Rules of Engagement and acceptance status
+      responses:
+        "200":
+          description: RoE status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoeStatus"
+
+  /roe/accept:
+    post:
+      operationId: acceptRoe
+      tags: [defense]
+      summary: Record acceptance of the Rules of Engagement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoeAcceptInput"
+      responses:
+        "200":
+          description: Acceptance recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoeAcceptance"
+
+  /integrity/status:
+    get:
+      operationId: getIntegrityStatus
+      tags: [defense]
+      summary: Heimdallr file-integrity status overview
+      responses:
+        "200":
+          description: Integrity status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrityStatus"
+
+  /integrity/baselines:
+    get:
+      operationId: getIntegrityBaselines
+      tags: [defense]
+      summary: List integrity baselines and pending watched paths
+      responses:
+        "200":
+          description: Baselines
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrityBaselineList"
+
+  /integrity/baseline:
+    post:
+      operationId: captureIntegrityBaseline
+      tags: [defense]
+      summary: Capture / refresh the integrity baseline for all watched paths
+      responses:
+        "200":
+          description: Baseline captured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrityScanResult"
+
+  /integrity/scan:
+    post:
+      operationId: runIntegrityScan
+      tags: [defense]
+      summary: Scan watched paths against the baseline
+      responses:
+        "200":
+          description: Scan result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrityScanResult"
+
+  /integrity/alerts:
+    get:
+      operationId: getIntegrityAlerts
+      tags: [defense]
+      summary: List file-integrity alerts
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IntegrityAlert"
+
+  /integrity/alerts/{id}:
+    patch:
+      operationId: updateIntegrityAlert
+      tags: [defense]
+      summary: Resolve an integrity alert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrityAlertUpdate"
+      responses:
+        "200":
+          description: Updated alert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrityAlert"
+
+  /incidents:
+    get:
+      operationId: getIncidents
+      tags: [defense]
+      summary: List security incidents
+      responses:
+        "200":
+          description: Incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Incident"
+    post:
+      operationId: createIncident
+      tags: [defense]
+      summary: Open a new security incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentCreate"
+      responses:
+        "200":
+          description: Created incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /incidents/{id}:
+    patch:
+      operationId: updateIncident
+      tags: [defense]
+      summary: Acknowledge or resolve an incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdate"
+      responses:
+        "200":
+          description: Updated incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /defense/anomalies:
+    get:
+      operationId: getAnomalies
+      tags: [defense]
+      summary: Intrusion / anomaly detection feed
+      responses:
+        "200":
+          description: Anomalies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnomalyReport"
+
+  /defense/posture:
+    get:
+      operationId: getPosture
+      tags: [defense]
+      summary: Overall defensive posture
+      responses:
+        "200":
+          description: Posture
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefensePosture"
+
+  /compliance/report:
+    get:
+      operationId: getComplianceReport
+      tags: [defense]
+      summary: Exportable ethics / compliance report
+      responses:
+        "200":
+          description: Compliance report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceReport"
+
 components:
   parameters:
     AuthorizationSessionHeader:
@@ -1043,3 +1263,333 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PackageInfo"
+
+    RoeStatus:
+      type: object
+      required: [version, accepted, authorizedScope, defaultScope, laws]
+      properties:
+        version:
+          type: string
+        accepted:
+          type: boolean
+        acceptedAt:
+          type: [string, 'null']
+        operator:
+          type: [string, 'null']
+        authorizedScope:
+          type: string
+        defaultScope:
+          type: string
+        laws:
+          type: array
+          items:
+            type: string
+
+    RoeAcceptInput:
+      type: object
+      required: [scopeAcknowledged]
+      properties:
+        scopeAcknowledged:
+          type: boolean
+        authorizedScope:
+          type: string
+
+    RoeAcceptance:
+      type: object
+      required: [version, accepted, acceptedAt, operator, authorizedScope]
+      properties:
+        version:
+          type: string
+        accepted:
+          type: boolean
+        acceptedAt:
+          type: string
+        operator:
+          type: string
+        authorizedScope:
+          type: string
+
+    IntegrityStatus:
+      type: object
+      required: [watched, baselined, openAlerts, monitoring]
+      properties:
+        watched:
+          type: integer
+        baselined:
+          type: integer
+        openAlerts:
+          type: integer
+        monitoring:
+          type: boolean
+        lastBaselineAt:
+          type: [string, 'null']
+
+    IntegrityBaselineItem:
+      type: object
+      required: [id, path, hash, sizeBytes]
+      properties:
+        id:
+          type: integer
+        path:
+          type: string
+        hash:
+          type: string
+        sizeBytes:
+          type: integer
+        updatedAt:
+          type: [string, 'null']
+
+    IntegrityBaselineList:
+      type: object
+      required: [baselines, pending]
+      properties:
+        baselines:
+          type: array
+          items:
+            $ref: "#/components/schemas/IntegrityBaselineItem"
+        pending:
+          type: array
+          items:
+            $ref: "#/components/schemas/IntegrityBaselineItem"
+
+    IntegrityAlert:
+      type: object
+      required: [id, timestamp, path, changeType, severity, status]
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+        path:
+          type: string
+        changeType:
+          type: string
+        expectedHash:
+          type: [string, 'null']
+        actualHash:
+          type: [string, 'null']
+        severity:
+          type: string
+        status:
+          type: string
+
+    IntegrityScanResult:
+      type: object
+      required: [checked, alerts]
+      properties:
+        checked:
+          type: integer
+        alerts:
+          type: array
+          items:
+            $ref: "#/components/schemas/IntegrityAlert"
+
+    IntegrityAlertUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    Incident:
+      type: object
+      required: [id, timestamp, title, description, category, severity, status, source]
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        source:
+          type: string
+        acknowledgedAt:
+          type: [string, 'null']
+        acknowledgedBy:
+          type: [string, 'null']
+        resolvedAt:
+          type: [string, 'null']
+        resolvedBy:
+          type: [string, 'null']
+        resolution:
+          type: [string, 'null']
+
+    IncidentCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        severity:
+          type: string
+
+    IncidentUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+        resolution:
+          type: string
+
+    Anomaly:
+      type: object
+      required: [id, type, severity, detail, count, detectedAt]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+        detail:
+          type: string
+        count:
+          type: integer
+        detectedAt:
+          type: string
+
+    AnomalyReport:
+      type: object
+      required: [threatLevel, total, critical, anomalies]
+      properties:
+        threatLevel:
+          type: string
+        total:
+          type: integer
+        critical:
+          type: integer
+        anomalies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Anomaly"
+
+    PostureCheck:
+      type: object
+      required: [id, label, status, detail]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        status:
+          type: string
+        detail:
+          type: string
+
+    DefensePosture:
+      type: object
+      required: [score, status, threatLevel, roeAccepted, openIncidents, openIntegrityAlerts, baselinedFiles, activeAnomalies, checks, updatedAt]
+      properties:
+        score:
+          type: integer
+        status:
+          type: string
+        threatLevel:
+          type: string
+        roeAccepted:
+          type: boolean
+        openIncidents:
+          type: integer
+        openIntegrityAlerts:
+          type: integer
+        baselinedFiles:
+          type: integer
+        activeAnomalies:
+          type: integer
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostureCheck"
+        updatedAt:
+          type: string
+
+    ComplianceAcceptance:
+      type: object
+      required: [id, timestamp, operator, roeVersion, authorizedScope]
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+        operator:
+          type: string
+        roeVersion:
+          type: string
+        authorizedScope:
+          type: string
+        ipAddress:
+          type: [string, 'null']
+
+    ComplianceReport:
+      type: object
+      required: [generatedAt, roeVersion, laws, acceptances, audit, incidents, integrity, posture]
+      properties:
+        generatedAt:
+          type: string
+        roeVersion:
+          type: string
+        laws:
+          type: array
+          items:
+            type: string
+        acceptances:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplianceAcceptance"
+        audit:
+          type: object
+          required: [total, info, success, warn, critical]
+          properties:
+            total:
+              type: integer
+            info:
+              type: integer
+            success:
+              type: integer
+            warn:
+              type: integer
+            critical:
+              type: integer
+        incidents:
+          type: object
+          required: [total, open, acknowledged, resolved]
+          properties:
+            total:
+              type: integer
+            open:
+              type: integer
+            acknowledged:
+              type: integer
+            resolved:
+              type: integer
+        integrity:
+          type: object
+          required: [baselined, openAlerts]
+          properties:
+            baselined:
+              type: integer
+            openAlerts:
+              type: integer
+        posture:
+          type: object
+          required: [score, status, threatLevel]
+          properties:
+            score:
+              type: integer
+            status:
+              type: string
+            threatLevel:
+              type: string

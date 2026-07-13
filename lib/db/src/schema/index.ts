@@ -3,3 +3,7 @@ export * from "./modules";
 export * from "./audit_logs";
 export * from "./terminal_history";
 export * from "./auth";
+export * from "./roe_acceptances";
+export * from "./integrity_baselines";
+export * from "./integrity_alerts";
+export * from "./incidents";

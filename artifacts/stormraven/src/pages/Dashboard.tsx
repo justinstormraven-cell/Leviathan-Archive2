@@ -5,9 +5,10 @@ import {
   useGetSystemMetrics, 
   useGetRealms, 
   useGetModules, 
-  useGetAuditLogs 
+  useGetAuditLogs,
+  useGetPosture
 } from "@workspace/api-client-react";
-import { Activity, Cpu, Server, ShieldAlert, Zap } from "lucide-react";
+import { Activity, Cpu, Server, ShieldAlert, ShieldCheck, Zap } from "lucide-react";
 import { PageLink } from "@/desktop/PageLink";
 
 export default function Dashboard() {
@@ -27,6 +28,10 @@ export default function Dashboard() {
     { limit: 5 },
     { query: { refetchInterval: 5000, queryKey: ["/api/audit-logs", { limit: 5 }] } }
   );
+
+  const { data: posture } = useGetPosture({
+    query: { refetchInterval: 15000, queryKey: ["/api/defense/posture"] }
+  });
 
   return (
     <Layout>
@@ -83,6 +88,50 @@ export default function Dashboard() {
             </div>
           </TerminalCard>
         </div>
+
+        {/* Defensive posture */}
+        {posture && (
+          <TerminalCard
+            variant={posture.score >= 85 ? "primary" : posture.score >= 60 ? "warning" : "destructive"}
+            className="space-y-3"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <h2 className="text-sm font-bold tracking-widest text-primary flex items-center gap-2">
+                <ShieldCheck size={14} /> DEFENSIVE POSTURE
+              </h2>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">{posture.status}</span>
+                <span className="text-2xl font-bold text-primary">
+                  {posture.score}
+                  <span className="text-sm text-muted-foreground">/100</span>
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+              {posture.checks.map((c) => (
+                <div
+                  key={c.id}
+                  title={c.detail}
+                  className="p-2 border border-border bg-secondary/30 rounded-sm flex flex-col gap-1"
+                >
+                  <StatusBadge
+                    variant={c.status === "PASS" ? "success" : c.status === "WARN" ? "warn" : "critical"}
+                    className="text-[9px] self-start"
+                  >
+                    {c.status}
+                  </StatusBadge>
+                  <span className="text-[10px] text-foreground leading-tight">{c.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs uppercase tracking-wider">
+              <PageLink href="/huginn" className="text-muted-foreground hover:text-primary">Huginn Watch</PageLink>
+              <PageLink href="/heimdallr" className="text-muted-foreground hover:text-primary">Heimdallr</PageLink>
+              <PageLink href="/valkyrie" className="text-muted-foreground hover:text-primary">Valkyrie</PageLink>
+              <PageLink href="/logberg" className="text-muted-foreground hover:text-primary">Lögberg</PageLink>
+            </div>
+          </TerminalCard>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Realms Summary */}

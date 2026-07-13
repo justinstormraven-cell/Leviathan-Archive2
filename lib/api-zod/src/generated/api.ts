@@ -419,3 +419,299 @@ export const LogoutMobileSessionResponse = zod.object({
 })
 
 
+/**
+ * @summary Current Rules of Engagement and acceptance status
+ */
+export const GetRoeStatusResponse = zod.object({
+  "version": zod.string(),
+  "accepted": zod.boolean(),
+  "acceptedAt": zod.string().nullish(),
+  "operator": zod.string().nullish(),
+  "authorizedScope": zod.string(),
+  "defaultScope": zod.string(),
+  "laws": zod.array(zod.string())
+})
+
+
+/**
+ * @summary Record acceptance of the Rules of Engagement
+ */
+export const AcceptRoeBody = zod.object({
+  "scopeAcknowledged": zod.boolean(),
+  "authorizedScope": zod.string().optional()
+})
+
+export const AcceptRoeResponse = zod.object({
+  "version": zod.string(),
+  "accepted": zod.boolean(),
+  "acceptedAt": zod.string(),
+  "operator": zod.string(),
+  "authorizedScope": zod.string()
+})
+
+
+/**
+ * @summary Heimdallr file-integrity status overview
+ */
+export const GetIntegrityStatusResponse = zod.object({
+  "watched": zod.number(),
+  "baselined": zod.number(),
+  "openAlerts": zod.number(),
+  "monitoring": zod.boolean(),
+  "lastBaselineAt": zod.string().nullish()
+})
+
+
+/**
+ * @summary List integrity baselines and pending watched paths
+ */
+export const GetIntegrityBaselinesResponse = zod.object({
+  "baselines": zod.array(zod.object({
+  "id": zod.number(),
+  "path": zod.string(),
+  "hash": zod.string(),
+  "sizeBytes": zod.number(),
+  "updatedAt": zod.string().nullish()
+})),
+  "pending": zod.array(zod.object({
+  "id": zod.number(),
+  "path": zod.string(),
+  "hash": zod.string(),
+  "sizeBytes": zod.number(),
+  "updatedAt": zod.string().nullish()
+}))
+})
+
+
+/**
+ * @summary Capture / refresh the integrity baseline for all watched paths
+ */
+export const CaptureIntegrityBaselineResponse = zod.object({
+  "checked": zod.number(),
+  "alerts": zod.array(zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "path": zod.string(),
+  "changeType": zod.string(),
+  "expectedHash": zod.string().nullish(),
+  "actualHash": zod.string().nullish(),
+  "severity": zod.string(),
+  "status": zod.string()
+}))
+})
+
+
+/**
+ * @summary Scan watched paths against the baseline
+ */
+export const RunIntegrityScanResponse = zod.object({
+  "checked": zod.number(),
+  "alerts": zod.array(zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "path": zod.string(),
+  "changeType": zod.string(),
+  "expectedHash": zod.string().nullish(),
+  "actualHash": zod.string().nullish(),
+  "severity": zod.string(),
+  "status": zod.string()
+}))
+})
+
+
+/**
+ * @summary List file-integrity alerts
+ */
+export const GetIntegrityAlertsResponseItem = zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "path": zod.string(),
+  "changeType": zod.string(),
+  "expectedHash": zod.string().nullish(),
+  "actualHash": zod.string().nullish(),
+  "severity": zod.string(),
+  "status": zod.string()
+})
+export const GetIntegrityAlertsResponse = zod.array(GetIntegrityAlertsResponseItem)
+
+
+/**
+ * @summary Resolve an integrity alert
+ */
+export const UpdateIntegrityAlertParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateIntegrityAlertBody = zod.object({
+  "status": zod.string()
+})
+
+export const UpdateIntegrityAlertResponse = zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "path": zod.string(),
+  "changeType": zod.string(),
+  "expectedHash": zod.string().nullish(),
+  "actualHash": zod.string().nullish(),
+  "severity": zod.string(),
+  "status": zod.string()
+})
+
+
+/**
+ * @summary List security incidents
+ */
+export const GetIncidentsResponseItem = zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "category": zod.string(),
+  "severity": zod.string(),
+  "status": zod.string(),
+  "source": zod.string(),
+  "acknowledgedAt": zod.string().nullish(),
+  "acknowledgedBy": zod.string().nullish(),
+  "resolvedAt": zod.string().nullish(),
+  "resolvedBy": zod.string().nullish(),
+  "resolution": zod.string().nullish()
+})
+export const GetIncidentsResponse = zod.array(GetIncidentsResponseItem)
+
+
+/**
+ * @summary Open a new security incident
+ */
+export const CreateIncidentBody = zod.object({
+  "title": zod.string(),
+  "description": zod.string().optional(),
+  "category": zod.string().optional(),
+  "severity": zod.string().optional()
+})
+
+export const CreateIncidentResponse = zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "category": zod.string(),
+  "severity": zod.string(),
+  "status": zod.string(),
+  "source": zod.string(),
+  "acknowledgedAt": zod.string().nullish(),
+  "acknowledgedBy": zod.string().nullish(),
+  "resolvedAt": zod.string().nullish(),
+  "resolvedBy": zod.string().nullish(),
+  "resolution": zod.string().nullish()
+})
+
+
+/**
+ * @summary Acknowledge or resolve an incident
+ */
+export const UpdateIncidentParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateIncidentBody = zod.object({
+  "status": zod.string(),
+  "resolution": zod.string().optional()
+})
+
+export const UpdateIncidentResponse = zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "title": zod.string(),
+  "description": zod.string(),
+  "category": zod.string(),
+  "severity": zod.string(),
+  "status": zod.string(),
+  "source": zod.string(),
+  "acknowledgedAt": zod.string().nullish(),
+  "acknowledgedBy": zod.string().nullish(),
+  "resolvedAt": zod.string().nullish(),
+  "resolvedBy": zod.string().nullish(),
+  "resolution": zod.string().nullish()
+})
+
+
+/**
+ * @summary Intrusion / anomaly detection feed
+ */
+export const GetAnomaliesResponse = zod.object({
+  "threatLevel": zod.string(),
+  "total": zod.number(),
+  "critical": zod.number(),
+  "anomalies": zod.array(zod.object({
+  "id": zod.string(),
+  "type": zod.string(),
+  "severity": zod.string(),
+  "detail": zod.string(),
+  "count": zod.number(),
+  "detectedAt": zod.string()
+}))
+})
+
+
+/**
+ * @summary Overall defensive posture
+ */
+export const GetPostureResponse = zod.object({
+  "score": zod.number(),
+  "status": zod.string(),
+  "threatLevel": zod.string(),
+  "roeAccepted": zod.boolean(),
+  "openIncidents": zod.number(),
+  "openIntegrityAlerts": zod.number(),
+  "baselinedFiles": zod.number(),
+  "activeAnomalies": zod.number(),
+  "checks": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "status": zod.string(),
+  "detail": zod.string()
+})),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Exportable ethics / compliance report
+ */
+export const GetComplianceReportResponse = zod.object({
+  "generatedAt": zod.string(),
+  "roeVersion": zod.string(),
+  "laws": zod.array(zod.string()),
+  "acceptances": zod.array(zod.object({
+  "id": zod.number(),
+  "timestamp": zod.string(),
+  "operator": zod.string(),
+  "roeVersion": zod.string(),
+  "authorizedScope": zod.string(),
+  "ipAddress": zod.string().nullish()
+})),
+  "audit": zod.object({
+  "total": zod.number(),
+  "info": zod.number(),
+  "success": zod.number(),
+  "warn": zod.number(),
+  "critical": zod.number()
+}),
+  "incidents": zod.object({
+  "total": zod.number(),
+  "open": zod.number(),
+  "acknowledged": zod.number(),
+  "resolved": zod.number()
+}),
+  "integrity": zod.object({
+  "baselined": zod.number(),
+  "openAlerts": zod.number()
+}),
+  "posture": zod.object({
+  "score": zod.number(),
+  "status": zod.string(),
+  "threatLevel": zod.string()
+})
+})
+
+

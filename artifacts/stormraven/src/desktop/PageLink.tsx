@@ -12,6 +12,10 @@ const ROUTE_TO_APP: Record<string, string> = {
   "/audit": "mimir",
   "/terminal": "terminal",
   "/kernel": "ymir",
+  "/huginn": "huginn",
+  "/heimdallr": "heimdallr",
+  "/valkyrie": "valkyrie",
+  "/logberg": "logberg",
 };
 
 /**

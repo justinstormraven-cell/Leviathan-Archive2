@@ -12,6 +12,10 @@ import {
   ShieldAlert,
   Binary,
   Waves,
+  Radar,
+  Fingerprint,
+  Swords,
+  Scale,
 } from "lucide-react";
 
 import Files from "./apps/Files";
@@ -27,6 +31,10 @@ import Realms from "@/pages/Realms";
 import Modules from "@/pages/Modules";
 import AuditLog from "@/pages/AuditLog";
 import Kernel from "@/pages/Kernel";
+import Huginn from "@/pages/Huginn";
+import Heimdallr from "@/pages/Heimdallr";
+import Valkyrie from "@/pages/Valkyrie";
+import Logberg from "@/pages/Logberg";
 
 import type { WinInstance } from "./types";
 
@@ -160,6 +168,46 @@ export const APPS: AppDef[] = [
     component: Leviathan,
     defaultSize: { width: 720, height: 620 },
     dock: true,
+    category: "Nidelvir",
+  },
+  {
+    id: "huginn",
+    name: "Huginn Watch",
+    icon: Radar,
+    gradient: "from-fuchsia-400/25 to-blue-700/20",
+    component: Huginn,
+    defaultSize: { width: 900, height: 600 },
+    dock: false,
+    category: "Nidelvir",
+  },
+  {
+    id: "heimdallr",
+    name: "Heimdallr",
+    icon: Fingerprint,
+    gradient: "from-amber-300/25 to-cyan-700/20",
+    component: Heimdallr,
+    defaultSize: { width: 960, height: 620 },
+    dock: false,
+    category: "Nidelvir",
+  },
+  {
+    id: "valkyrie",
+    name: "Valkyrie",
+    icon: Swords,
+    gradient: "from-rose-400/25 to-indigo-700/20",
+    component: Valkyrie,
+    defaultSize: { width: 900, height: 640 },
+    dock: false,
+    category: "Nidelvir",
+  },
+  {
+    id: "logberg",
+    name: "Lögberg",
+    icon: Scale,
+    gradient: "from-emerald-300/25 to-blue-700/20",
+    component: Logberg,
+    defaultSize: { width: 900, height: 640 },
+    dock: false,
     category: "Nidelvir",
   },
 ];

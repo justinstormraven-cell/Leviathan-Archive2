@@ -20,6 +20,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AnomalyReport,
   AuditLog,
   AuthStatus,
   AuthToken,
@@ -27,6 +28,8 @@ import type {
   BeginBrowserLoginParams,
   CommandInput,
   CommandResult,
+  ComplianceReport,
+  DefensePosture,
   ErrorEnvelope,
   ErrorResponse,
   FsFile,
@@ -38,6 +41,14 @@ import type {
   GetFsReadParams,
   HandleBrowserLoginCallbackParams,
   HealthStatus,
+  Incident,
+  IncidentCreate,
+  IncidentUpdate,
+  IntegrityAlert,
+  IntegrityAlertUpdate,
+  IntegrityBaselineList,
+  IntegrityScanResult,
+  IntegrityStatus,
   KernelLog,
   LeviathanChatInput,
   LeviathanChatResult,
@@ -51,6 +62,9 @@ import type {
   PackageList,
   ProcessList,
   Realm,
+  RoeAcceptInput,
+  RoeAcceptance,
+  RoeStatus,
   SystemMetrics
 } from './api.schemas';
 
@@ -2010,4 +2024,1048 @@ export const useLogoutMobileSession = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getLogoutMobileSessionMutationOptions(options));
     }
+
+export const getGetRoeStatusUrl = () => {
+
+
+
+
+  return `/api/roe/status`
+}
+
+/**
+ * @summary Current Rules of Engagement and acceptance status
+ */
+export const getRoeStatus = async ( options?: RequestInit): Promise<RoeStatus> => {
+
+  return customFetch<RoeStatus>(getGetRoeStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRoeStatusQueryKey = () => {
+    return [
+    `/api/roe/status`
+    ] as const;
+    }
+
+
+export const getGetRoeStatusQueryOptions = <TData = Awaited<ReturnType<typeof getRoeStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoeStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRoeStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoeStatus>>> = ({ signal }) => getRoeStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRoeStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetRoeStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getRoeStatus>>>
+export type GetRoeStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Current Rules of Engagement and acceptance status
+ */
+
+export function useGetRoeStatus<TData = Awaited<ReturnType<typeof getRoeStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoeStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetRoeStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAcceptRoeUrl = () => {
+
+
+
+
+  return `/api/roe/accept`
+}
+
+/**
+ * @summary Record acceptance of the Rules of Engagement
+ */
+export const acceptRoe = async (roeAcceptInput: RoeAcceptInput, options?: RequestInit): Promise<RoeAcceptance> => {
+
+  return customFetch<RoeAcceptance>(getAcceptRoeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(roeAcceptInput)
+  }
+);}
+
+
+
+
+
+export const getAcceptRoeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptRoe>>, TError,{data: BodyType<RoeAcceptInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof acceptRoe>>, TError,{data: BodyType<RoeAcceptInput>}, TContext> => {
+
+const mutationKey = ['acceptRoe'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof acceptRoe>>, {data: BodyType<RoeAcceptInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  acceptRoe(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AcceptRoeMutationResult = NonNullable<Awaited<ReturnType<typeof acceptRoe>>>
+    export type AcceptRoeMutationBody = BodyType<RoeAcceptInput>
+    export type AcceptRoeMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Record acceptance of the Rules of Engagement
+ */
+export const useAcceptRoe = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptRoe>>, TError,{data: BodyType<RoeAcceptInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof acceptRoe>>,
+        TError,
+        {data: BodyType<RoeAcceptInput>},
+        TContext
+      > => {
+      return useMutation(getAcceptRoeMutationOptions(options));
+    }
+
+export const getGetIntegrityStatusUrl = () => {
+
+
+
+
+  return `/api/integrity/status`
+}
+
+/**
+ * @summary Heimdallr file-integrity status overview
+ */
+export const getIntegrityStatus = async ( options?: RequestInit): Promise<IntegrityStatus> => {
+
+  return customFetch<IntegrityStatus>(getGetIntegrityStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetIntegrityStatusQueryKey = () => {
+    return [
+    `/api/integrity/status`
+    ] as const;
+    }
+
+
+export const getGetIntegrityStatusQueryOptions = <TData = Awaited<ReturnType<typeof getIntegrityStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetIntegrityStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIntegrityStatus>>> = ({ signal }) => getIntegrityStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIntegrityStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetIntegrityStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getIntegrityStatus>>>
+export type GetIntegrityStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Heimdallr file-integrity status overview
+ */
+
+export function useGetIntegrityStatus<TData = Awaited<ReturnType<typeof getIntegrityStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetIntegrityStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetIntegrityBaselinesUrl = () => {
+
+
+
+
+  return `/api/integrity/baselines`
+}
+
+/**
+ * @summary List integrity baselines and pending watched paths
+ */
+export const getIntegrityBaselines = async ( options?: RequestInit): Promise<IntegrityBaselineList> => {
+
+  return customFetch<IntegrityBaselineList>(getGetIntegrityBaselinesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetIntegrityBaselinesQueryKey = () => {
+    return [
+    `/api/integrity/baselines`
+    ] as const;
+    }
+
+
+export const getGetIntegrityBaselinesQueryOptions = <TData = Awaited<ReturnType<typeof getIntegrityBaselines>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityBaselines>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetIntegrityBaselinesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIntegrityBaselines>>> = ({ signal }) => getIntegrityBaselines({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIntegrityBaselines>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetIntegrityBaselinesQueryResult = NonNullable<Awaited<ReturnType<typeof getIntegrityBaselines>>>
+export type GetIntegrityBaselinesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List integrity baselines and pending watched paths
+ */
+
+export function useGetIntegrityBaselines<TData = Awaited<ReturnType<typeof getIntegrityBaselines>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityBaselines>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetIntegrityBaselinesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCaptureIntegrityBaselineUrl = () => {
+
+
+
+
+  return `/api/integrity/baseline`
+}
+
+/**
+ * @summary Capture / refresh the integrity baseline for all watched paths
+ */
+export const captureIntegrityBaseline = async ( options?: RequestInit): Promise<IntegrityScanResult> => {
+
+  return customFetch<IntegrityScanResult>(getCaptureIntegrityBaselineUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCaptureIntegrityBaselineMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof captureIntegrityBaseline>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof captureIntegrityBaseline>>, TError,void, TContext> => {
+
+const mutationKey = ['captureIntegrityBaseline'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof captureIntegrityBaseline>>, void> = () => {
+
+
+          return  captureIntegrityBaseline(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CaptureIntegrityBaselineMutationResult = NonNullable<Awaited<ReturnType<typeof captureIntegrityBaseline>>>
+
+    export type CaptureIntegrityBaselineMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Capture / refresh the integrity baseline for all watched paths
+ */
+export const useCaptureIntegrityBaseline = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof captureIntegrityBaseline>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof captureIntegrityBaseline>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getCaptureIntegrityBaselineMutationOptions(options));
+    }
+
+export const getRunIntegrityScanUrl = () => {
+
+
+
+
+  return `/api/integrity/scan`
+}
+
+/**
+ * @summary Scan watched paths against the baseline
+ */
+export const runIntegrityScan = async ( options?: RequestInit): Promise<IntegrityScanResult> => {
+
+  return customFetch<IntegrityScanResult>(getRunIntegrityScanUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getRunIntegrityScanMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runIntegrityScan>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof runIntegrityScan>>, TError,void, TContext> => {
+
+const mutationKey = ['runIntegrityScan'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof runIntegrityScan>>, void> = () => {
+
+
+          return  runIntegrityScan(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RunIntegrityScanMutationResult = NonNullable<Awaited<ReturnType<typeof runIntegrityScan>>>
+
+    export type RunIntegrityScanMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Scan watched paths against the baseline
+ */
+export const useRunIntegrityScan = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runIntegrityScan>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof runIntegrityScan>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getRunIntegrityScanMutationOptions(options));
+    }
+
+export const getGetIntegrityAlertsUrl = () => {
+
+
+
+
+  return `/api/integrity/alerts`
+}
+
+/**
+ * @summary List file-integrity alerts
+ */
+export const getIntegrityAlerts = async ( options?: RequestInit): Promise<IntegrityAlert[]> => {
+
+  return customFetch<IntegrityAlert[]>(getGetIntegrityAlertsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetIntegrityAlertsQueryKey = () => {
+    return [
+    `/api/integrity/alerts`
+    ] as const;
+    }
+
+
+export const getGetIntegrityAlertsQueryOptions = <TData = Awaited<ReturnType<typeof getIntegrityAlerts>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityAlerts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetIntegrityAlertsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIntegrityAlerts>>> = ({ signal }) => getIntegrityAlerts({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIntegrityAlerts>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetIntegrityAlertsQueryResult = NonNullable<Awaited<ReturnType<typeof getIntegrityAlerts>>>
+export type GetIntegrityAlertsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List file-integrity alerts
+ */
+
+export function useGetIntegrityAlerts<TData = Awaited<ReturnType<typeof getIntegrityAlerts>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIntegrityAlerts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetIntegrityAlertsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateIntegrityAlertUrl = (id: number,) => {
+
+
+
+
+  return `/api/integrity/alerts/${id}`
+}
+
+/**
+ * @summary Resolve an integrity alert
+ */
+export const updateIntegrityAlert = async (id: number,
+    integrityAlertUpdate: IntegrityAlertUpdate, options?: RequestInit): Promise<IntegrityAlert> => {
+
+  return customFetch<IntegrityAlert>(getUpdateIntegrityAlertUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(integrityAlertUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateIntegrityAlertMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateIntegrityAlert>>, TError,{id: number;data: BodyType<IntegrityAlertUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateIntegrityAlert>>, TError,{id: number;data: BodyType<IntegrityAlertUpdate>}, TContext> => {
+
+const mutationKey = ['updateIntegrityAlert'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateIntegrityAlert>>, {id: number;data: BodyType<IntegrityAlertUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateIntegrityAlert(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateIntegrityAlertMutationResult = NonNullable<Awaited<ReturnType<typeof updateIntegrityAlert>>>
+    export type UpdateIntegrityAlertMutationBody = BodyType<IntegrityAlertUpdate>
+    export type UpdateIntegrityAlertMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Resolve an integrity alert
+ */
+export const useUpdateIntegrityAlert = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateIntegrityAlert>>, TError,{id: number;data: BodyType<IntegrityAlertUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateIntegrityAlert>>,
+        TError,
+        {id: number;data: BodyType<IntegrityAlertUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateIntegrityAlertMutationOptions(options));
+    }
+
+export const getGetIncidentsUrl = () => {
+
+
+
+
+  return `/api/incidents`
+}
+
+/**
+ * @summary List security incidents
+ */
+export const getIncidents = async ( options?: RequestInit): Promise<Incident[]> => {
+
+  return customFetch<Incident[]>(getGetIncidentsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetIncidentsQueryKey = () => {
+    return [
+    `/api/incidents`
+    ] as const;
+    }
+
+
+export const getGetIncidentsQueryOptions = <TData = Awaited<ReturnType<typeof getIncidents>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIncidents>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetIncidentsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getIncidents>>> = ({ signal }) => getIncidents({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getIncidents>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetIncidentsQueryResult = NonNullable<Awaited<ReturnType<typeof getIncidents>>>
+export type GetIncidentsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List security incidents
+ */
+
+export function useGetIncidents<TData = Awaited<ReturnType<typeof getIncidents>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getIncidents>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetIncidentsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateIncidentUrl = () => {
+
+
+
+
+  return `/api/incidents`
+}
+
+/**
+ * @summary Open a new security incident
+ */
+export const createIncident = async (incidentCreate: IncidentCreate, options?: RequestInit): Promise<Incident> => {
+
+  return customFetch<Incident>(getCreateIncidentUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(incidentCreate)
+  }
+);}
+
+
+
+
+
+export const getCreateIncidentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createIncident>>, TError,{data: BodyType<IncidentCreate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createIncident>>, TError,{data: BodyType<IncidentCreate>}, TContext> => {
+
+const mutationKey = ['createIncident'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createIncident>>, {data: BodyType<IncidentCreate>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createIncident(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateIncidentMutationResult = NonNullable<Awaited<ReturnType<typeof createIncident>>>
+    export type CreateIncidentMutationBody = BodyType<IncidentCreate>
+    export type CreateIncidentMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Open a new security incident
+ */
+export const useCreateIncident = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createIncident>>, TError,{data: BodyType<IncidentCreate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createIncident>>,
+        TError,
+        {data: BodyType<IncidentCreate>},
+        TContext
+      > => {
+      return useMutation(getCreateIncidentMutationOptions(options));
+    }
+
+export const getUpdateIncidentUrl = (id: number,) => {
+
+
+
+
+  return `/api/incidents/${id}`
+}
+
+/**
+ * @summary Acknowledge or resolve an incident
+ */
+export const updateIncident = async (id: number,
+    incidentUpdate: IncidentUpdate, options?: RequestInit): Promise<Incident> => {
+
+  return customFetch<Incident>(getUpdateIncidentUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(incidentUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateIncidentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateIncident>>, TError,{id: number;data: BodyType<IncidentUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateIncident>>, TError,{id: number;data: BodyType<IncidentUpdate>}, TContext> => {
+
+const mutationKey = ['updateIncident'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateIncident>>, {id: number;data: BodyType<IncidentUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateIncident(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateIncidentMutationResult = NonNullable<Awaited<ReturnType<typeof updateIncident>>>
+    export type UpdateIncidentMutationBody = BodyType<IncidentUpdate>
+    export type UpdateIncidentMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Acknowledge or resolve an incident
+ */
+export const useUpdateIncident = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateIncident>>, TError,{id: number;data: BodyType<IncidentUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateIncident>>,
+        TError,
+        {id: number;data: BodyType<IncidentUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateIncidentMutationOptions(options));
+    }
+
+export const getGetAnomaliesUrl = () => {
+
+
+
+
+  return `/api/defense/anomalies`
+}
+
+/**
+ * @summary Intrusion / anomaly detection feed
+ */
+export const getAnomalies = async ( options?: RequestInit): Promise<AnomalyReport> => {
+
+  return customFetch<AnomalyReport>(getGetAnomaliesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAnomaliesQueryKey = () => {
+    return [
+    `/api/defense/anomalies`
+    ] as const;
+    }
+
+
+export const getGetAnomaliesQueryOptions = <TData = Awaited<ReturnType<typeof getAnomalies>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAnomalies>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAnomaliesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAnomalies>>> = ({ signal }) => getAnomalies({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAnomalies>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAnomaliesQueryResult = NonNullable<Awaited<ReturnType<typeof getAnomalies>>>
+export type GetAnomaliesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Intrusion / anomaly detection feed
+ */
+
+export function useGetAnomalies<TData = Awaited<ReturnType<typeof getAnomalies>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAnomalies>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAnomaliesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPostureUrl = () => {
+
+
+
+
+  return `/api/defense/posture`
+}
+
+/**
+ * @summary Overall defensive posture
+ */
+export const getPosture = async ( options?: RequestInit): Promise<DefensePosture> => {
+
+  return customFetch<DefensePosture>(getGetPostureUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPostureQueryKey = () => {
+    return [
+    `/api/defense/posture`
+    ] as const;
+    }
+
+
+export const getGetPostureQueryOptions = <TData = Awaited<ReturnType<typeof getPosture>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosture>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPostureQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosture>>> = ({ signal }) => getPosture({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPosture>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPostureQueryResult = NonNullable<Awaited<ReturnType<typeof getPosture>>>
+export type GetPostureQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Overall defensive posture
+ */
+
+export function useGetPosture<TData = Awaited<ReturnType<typeof getPosture>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosture>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPostureQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetComplianceReportUrl = () => {
+
+
+
+
+  return `/api/compliance/report`
+}
+
+/**
+ * @summary Exportable ethics / compliance report
+ */
+export const getComplianceReport = async ( options?: RequestInit): Promise<ComplianceReport> => {
+
+  return customFetch<ComplianceReport>(getGetComplianceReportUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetComplianceReportQueryKey = () => {
+    return [
+    `/api/compliance/report`
+    ] as const;
+    }
+
+
+export const getGetComplianceReportQueryOptions = <TData = Awaited<ReturnType<typeof getComplianceReport>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getComplianceReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetComplianceReportQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComplianceReport>>> = ({ signal }) => getComplianceReport({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getComplianceReport>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetComplianceReportQueryResult = NonNullable<Awaited<ReturnType<typeof getComplianceReport>>>
+export type GetComplianceReportQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Exportable ethics / compliance report
+ */
+
+export function useGetComplianceReport<TData = Awaited<ReturnType<typeof getComplianceReport>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getComplianceReport>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetComplianceReportQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
