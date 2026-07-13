@@ -1,0 +1,139 @@
+// =============================================================================
+// STORM RAVEN OS - MÚSPELLHEIMR CORE
+// MODULE: gRPC Router Implementation (Huginn & Muninn Daemons)
+// AUTHORIZATION: Leviathan Protocol
+// CREATOR: Luci Stormraven
+// =============================================================================
+
+package main
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"log"
+	"net"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	// Mock import for the compiled protobuf package generated from leviathan_router.proto
+	pb "github.com/lucistormraven/stormraven/muspellheimr/pb"
+)
+
+const (
+	gRPCBindAddress = "0.0.0.0:50051"
+)
+
+// RouterServer implements the pb.LeviathanRouterServer interface.
+type RouterServer struct {
+	pb.UnimplementedLeviathanRouterServer
+}
+
+// DispatchCommand processes unary RPC requests, routing execution logic to the Pantheon.
+func (s *RouterServer) DispatchCommand(ctx context.Context, req *pb.CommandRequest) (*pb.CommandResponse, error) {
+	log.Printf("[Huginn] Incoming Command Directive [%s] targeted for Daemon: %s", req.DirectiveId, req.TargetDaemon)
+
+	var executionOutput []byte
+	statusCode := int32(0)
+	receipt := fmt.Sprintf("BRAGI_LOG_%d", time.Now().UnixNano())
+
+	// Route based on targeted Pantheon daemon
+	switch req.TargetDaemon {
+	case "nidavellir":
+		log.Printf("[Leviathan] Routing payload to Niðavellir (Dying Star Forge)...")
+		// TODO: Interface with C# Ymir bridges via CGO or IPC to execute payload mutation
+		executionOutput = []byte("NIDAVELLIR_FORGE_IGNITED: Payload mutation initialized.")
+		statusCode = 200
+
+	case "ginnungagap":
+		log.Printf("[Ginnungagap] Executing void sequence. Memory sanitization in progress...")
+		executionOutput = []byte("VOID_SEQUENCE_COMPLETE")
+		statusCode = 200
+
+	case "loki":
+		log.Printf("[Loki] Injecting cryptographic entropy variance...")
+		// Simulate payload modification
+		executionOutput = []byte(fmt.Sprintf("ENTROPY_INJECTED: %x", req.CryptographicPayload))
+		statusCode = 200
+
+	default:
+		log.Printf("[Heimdallr] WARNING: Invalid daemon target: %s", req.TargetDaemon)
+		return nil, status.Errorf(codes.InvalidArgument, "Unknown Pantheon daemon: %s", req.TargetDaemon)
+	}
+
+	return &pb.CommandResponse{
+		StatusCode:       statusCode,
+		ExecutionReceipt: receipt,
+		OutputBuffer:     executionOutput,
+	}, nil
+}
+
+// StreamTelemetry handles bi-directional multiplexed streams from all active daemons.
+func (s *RouterServer) StreamTelemetry(stream pb.LeviathanRouter_StreamTelemetryServer) error {
+	log.Println("[Muninn] Bi-directional telemetry stream established.")
+
+	for {
+		// Ingest incoming telemetry pings
+		ping, err := stream.Recv()
+		if err == io.EOF {
+			log.Println("[Muninn] Telemetry stream gracefully closed by client.")
+			return nil
+		}
+		if err != nil {
+			log.Printf("[Heimdallr] Telemetry stream interrupted: %v", err)
+			return err
+		}
+
+		// Log ingestion via Óðinn/Bragi heuristics
+		log.Printf("[Óðinn Telemetry] Daemon: %s | CPU: %.2f%% | MEM: %.2fMB | STATE: %s",
+			ping.DaemonName, ping.CpuUtilization, ping.MemoryAllocation, ping.OperationalState)
+
+		// Formulate intelligent response/directive based on state
+		directive := "MAINTAIN_CURRENT_TRAJECTORY"
+		if ping.CpuUtilization > 95.0 {
+			directive = "THROTTLE_EXECUTION_INITIATE_COOLING"
+			log.Printf("[Óðinn] Warning: %s operating beyond thermal thresholds. Throttling commanded.", ping.DaemonName)
+		}
+
+		// Dispatch acknowledgment and potential Óðinn directives back to the daemon
+		ack := &pb.TelemetryAck{
+			ReceiptConfirmed: true,
+			OdinDirective:    directive,
+		}
+
+		if err := stream.Send(ack); err != nil {
+			log.Printf("[Heimdallr] Failed to transmit telemetry ACK to %s: %v", ping.DaemonName, err)
+			return err
+		}
+	}
+}
+
+// InitializeGRPCRouter bootstraps the TCP listener and registers the Leviathan service.
+func InitializeGRPCRouter() {
+	log.Printf("[Óðinn] Bootstrapping gRPC Telemetry Router on %s...", gRPCBindAddress)
+	
+	listener, err := net.Listen("tcp", gRPCBindAddress)
+	if err != nil {
+		log.Fatalf("[Leviathan] CRITICAL FAULT: Failed to bind gRPC socket: %v", err)
+	}
+
+	// Initialize gRPC server. In production, insert TLS/SSL interceptors here for Heimdallr validation.
+	grpcServer := grpc.NewServer()
+	
+	// Register our service implementation
+	pb.RegisterLeviathanRouterServer(grpcServer, &RouterServer{})
+
+	log.Println("[Óðinn] Huginn & Muninn daemons active. Awaiting Pantheon telemetry...")
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("[Leviathan] CRITICAL FAULT: gRPC server terminated unexpectedly: %v", err)
+	}
+}
+
+func main() {
+	// Ignition Sequence
+	InitializeGRPCRouter()
+}
+

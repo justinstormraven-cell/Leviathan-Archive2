@@ -1,0 +1,134 @@
+# ==============================================================================
+# STORM RAVEN OS - VÖLUNDR DAEMON
+# MODULE: Automated Build Workflow & Artifact Synthesis
+# AUTHORIZATION: Leviathan Protocol
+# ==============================================================================
+
+name: Völundr Synthesis Protocol
+
+on:
+  push:
+    branches: [ "main", "leviathan-core" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual ignition of the forge
+
+env:
+  OS_VERSION: "v29.14.0-ymir"
+  REGISTRY: ghcr.io
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # 1. FORGE ÁLFHEIMR (User Space / Frontend)
+  # ----------------------------------------------------------------------------
+  forge_alfheimr:
+    name: Compile Álfheimr (React/Jamstack)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: './alfheimr/package-lock.json'
+
+      - name: Execute Build Sequence
+        working-directory: ./alfheimr
+        run: |
+          npm ci
+          npm run build --if-present
+          
+      - name: Upload Álfheimr Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: alfheimr-build
+          path: ./alfheimr/build/
+
+  # ----------------------------------------------------------------------------
+  # 2. FORGE MÚSPELLHEIMR (Processing Core / Backend)
+  # ----------------------------------------------------------------------------
+  forge_muspellheimr:
+    name: Compile Múspellheimr (Golang Core)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Golang Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+          cache-dependency-path: './muspellheimr/go.sum'
+
+      - name: Execute Build Sequence (SSH & gRPC Routers)
+        working-directory: ./muspellheimr
+        run: |
+          go mod tidy
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o build/muspellheimr_core ./cmd/core/
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o build/muspellheimr_ssh ./cmd/ssh_endpoint/
+
+      - name: Upload Múspellheimr Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: muspellheimr-build
+          path: ./muspellheimr/build/
+
+  # ----------------------------------------------------------------------------
+  # 3. FORGE YMIR & NIÐAVELLIR (Kernel Bridges & Payload Forge)
+  # ----------------------------------------------------------------------------
+  forge_ymir:
+    name: Compile Ymir (C# Native Bridges)
+    runs-on: windows-latest # Required for specific native C# Windows kernel stubs
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize .NET Environment
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute Build Sequence (AOT Compilation)
+        working-directory: ./ymir
+        run: |
+          dotnet restore
+          dotnet publish -c Release -r win-x64 --self-contained true -p:PublishAot=true -o ./build/
+          
+      - name: Upload Ymir Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ymir-build
+          path: ./ymir/build/
+
+  # ----------------------------------------------------------------------------
+  # 4. PANTHEON SYNTHESIS (Final Assembly)
+  # ----------------------------------------------------------------------------
+  pantheon_integration:
+    name: Assemble Storm Raven OS
+    needs: [forge_alfheimr, forge_muspellheimr, forge_ymir]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./storm_raven_dist
+
+      - name: Verify Artifact Integrity (Heimdallr Pre-Check)
+        run: |
+          echo "[Óðinn] Verifying compiled hashes across Þríheimar..."
+          find ./storm_raven_dist -type f -exec sha256sum {} + > manifest_hashes.txt
+          cat manifest_hashes.txt
+
+      - name: Package Release State
+        run: |
+          tar -czvf storm_raven_os_${{ env.OS_VERSION }}.tar.gz -C ./storm_raven_dist .
+          
+      - name: Upload Final OS Matrix
+        uses: actions/upload-artifact@v4
+        with:
+          name: storm_raven_os_release
+          path: storm_raven_os_${{ env.OS_VERSION }}.tar.gz
+
